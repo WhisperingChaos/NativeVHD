@@ -1,0 +1,1 @@
+"%~dp0ImageRevertPrepare" "%~dp0Config\ImageStudentRevertPrepare.cmd"

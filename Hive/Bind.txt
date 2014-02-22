@@ -1,0 +1,1 @@
+Namespace.Interface.Method.Instance; C:\NNWKS\Interface\Version\Implementation\Method Instance 

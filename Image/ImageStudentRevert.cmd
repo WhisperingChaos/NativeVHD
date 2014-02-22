@@ -1,0 +1,2 @@
+"C:\Users\zServicePC\Desktop\PC Configuration\System Utilities\Utilities\Vdisk\DerivedReset.cmd" "C:\Users\zServicePC\Desktop\PC Configuration\System Utilities\Utilities\Vdisk\Config\BaseImageUpdate.cmd"
+cmd /c "%~dp0OnMachineStartupReset.cmd"
