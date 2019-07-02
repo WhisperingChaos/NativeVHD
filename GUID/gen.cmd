@@ -37,7 +37,7 @@ exit /b
   powershell -command "exit" 1> nul 2>nul
   if not errorlevel 0 echo "Powershell environment not present/callable.  Need it to generate uuid.">&2 & exit /b 1  
 
-  for /f %%u in ('powershell -command "$([guid]::NewGuid().ToString())"') do set GEN_PY_GUID=%%u  
+  for /f %%u in ('powershell -command "$([guid]::NewGuid().ToString())"') do set GEN_PY_GUID=%%u
 
   if "%GEN_PY_GUID%" == "" exit /b 1 
 
