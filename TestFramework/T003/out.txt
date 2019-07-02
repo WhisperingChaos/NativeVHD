@@ -1,0 +1,2 @@
+/t "Inform" /p "C:\Users\zServicePC\Desktop\PCconfig\NativeVHD\TestFramework\Driver.cmd" /m "Started: Testing: '"C:\Users\zServicePC\Desktop\PCconfig\NativeVHD\TestFramework\T003\\table.txt"'"
+/t "Inform" /p "C:\Users\zServicePC\Desktop\PCconfig\NativeVHD\TestFramework\Driver.cmd" /m "Ended: Testing: '"C:\Users\zServicePC\Desktop\PCconfig\NativeVHD\TestFramework\T003\\table.txt"'"

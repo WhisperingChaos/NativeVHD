@@ -1,0 +1,1 @@
+generate hello } NEQ 0 } echo hello >&2

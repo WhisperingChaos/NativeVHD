@@ -1,0 +1,3 @@
+continue error1 } NEQ 0 } echo error1 >&2 & exit /b 1
+continue ok1    } NEQ 0 } echo ok         & exit /b 0
+continue error2 } NEQ 0 } echo error2 >&2 & exit /b 1

@@ -1,0 +1,2 @@
+/k "a8561663-c05f-4a68-9b78-8470d4bc1dba" /c "PROTOTYPE" /u "zServicePC" /d "07/02/2019:15:40:08.71" /t "Inform" /p "Q:\TestFramework\Driver.cmd" /m "Started: Testing: '"Q:\TestFramework\T012\\table.txt"'"	
+/k "a8561663-c05f-4a68-9b78-8470d4bc1dba" /c "PROTOTYPE" /u "zServicePC" /d "07/02/2019:15:40:08.74" /t "Inform" /p "Q:\TestFramework\Driver.cmd" /m "Ended: Testing: '"Q:\TestFramework\T012\\table.txt"'"	

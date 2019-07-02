@@ -1,0 +1,1 @@
+generate SYSOUT & SYSERR } NEQ 0 } echo SYSOUT & echo SYSERR >&2 

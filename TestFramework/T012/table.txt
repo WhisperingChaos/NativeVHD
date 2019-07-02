@@ -1,0 +1,1 @@
+continue ok1    } NEQ 0 } echo okOKok & exit /b 0
