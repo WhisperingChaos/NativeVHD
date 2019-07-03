@@ -77,7 +77,7 @@ exit /b 0
   call "%~1"
   if errorlevel 1 call :Abort "Problem detected while processing paramters from configuration file '%~1'" & exit /b 1
 
-  if not exist "%BIND_ARGUMENT%\Check" call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check" & exit /b 1
+  if not exist "%BIND_ARGUMENT%\Check.cmd" call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check" & exit /b 1
   
   call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY BASE_LAYER_FILE BASE_LAYER_SIZE
   if errorlevel 1 (
