@@ -1,0 +1,1 @@
+Test 01 - Missing required Config } neq 0 } "%BASE_CREATE_PATH%\BaseCreate.cmd" "%BASE_CREATE_PATH%\BaseCreateTest\config.cmd"
