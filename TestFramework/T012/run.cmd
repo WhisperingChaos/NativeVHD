@@ -17,13 +17,14 @@ setlocal
 
   if not exist %LOG_FILE% echo "%~f0: failed!" & exit /b 1
 
+  :: make sure GUID specified
   findstr "\/k \"[1234567890abcdef-][1234567890abcdef-]*\"" %LOG_FILE% >nul
   if %errorlevel% neq 0 echo "%~f0: failed!" & exit /b 1
 
   findstr /C:"Abort" %LOG_FILE% >nul
   if %errorlevel% neq 1 echo "%~f0: failed!" & exit /b 1
 
-  ::del %LOG_FILE% >nul
+  del %LOG_FILE% >nul
   
 endlocal
 exit /b 0
