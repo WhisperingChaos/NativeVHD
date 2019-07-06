@@ -1,0 +1,1 @@
+Test quoted strings and pipe operator as command entry } NEQ 0 } echo "Hi" | findstr "Hi"
