@@ -1,0 +1,1 @@
+Test quoted strings, pipe operator, and environment variable expansion as command entry but performed in a negative perspective from T014 } NEQ 0 } echo %T015_HI% | findstr "Hi"

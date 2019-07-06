@@ -1,0 +1,1 @@
+Test quoted strings, pipe operator, and environment variable expansion as command entry } NEQ 0 } echo %T014_HI% | findstr "Hi"
