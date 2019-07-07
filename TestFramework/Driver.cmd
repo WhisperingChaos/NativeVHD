@@ -125,10 +125,13 @@ exit /b 0
 ::-- to pass each variable value by encapsulating in quotes, like "%%i", however, this
 ::-- simple mechanism fails when the column values themselves contain quotes.
   set EXIT_LEVEL=0
+  set /a LINE_NO_CURRENT=0
   for /F "tokens=1,2,3* delims=}" %%i in ( 'type "%TEST_TABLE_FILE%"' ) do (
     set TEST_DESCRIPTION=%%i
     set TEST_CONDITION=%%j
     set TEST_COMMAND=%%k
+    set /a LINE_NO_CURRENT+=1
+    call :tableEntryVerify || exit /b 1 
     call :runCapture %SYSOUT% %SYSERR% || if "%TEST_ON_FAILURE%" == "EXIT" goto mainexit
   )
 :mainexit:
@@ -161,6 +164,7 @@ exit /b %EXIT_LEVEL%
   endlocal & set %1=%SYSOUT_DEVICE%&set %2=%SYSERR_DEVICE%
 exit /b 0
 
+
 :onFailureOpt:
 
   if "%TEST_ON_FAILURE%" == "" (
@@ -170,9 +174,29 @@ exit /b 0
 
   if "%TEST_ON_FAILURE%" == "EXIT" exit /b 0
 
-  call :Abort "TEST_ON_FAILURE option value unknown: '%TEST_ON_FAILURE%'.  See help - /?" & exit /b 1
+  call :Abort "TEST_ON_FAILURE option value unknown: '%TEST_ON_FAILURE%'.  See help - /?"
+exit /b 1
 
+
+:tableEntryVerify:
+
+    :: assuming command extensions are enabled
+	:: using "defined" because these variables may contain double quotes, (, ), | or other special batch characters. 
+    if not defined TEST_DESCRIPTION (
+	  call :Abort "Malformed Test Table entry.  Missing Test Description.  Perhaps spurious newline.  Near line number: '%LINE_NO_CURRENT%'."
+      exit /b 1
+	)
+    if not defined TEST_CONDITION (
+	  call :Abort "Malformed Test Table entry.  Missing Test Condition to compare against errorlevel.  Examles: 'NEQ 1', 'EQU 0'.  See test: '%TEST_DESCRIPTION%'.   Near line number: '%LINE_NO_CURRENT%'."
+	  exit /b 1
+	)
+    if not defined TEST_COMMAND (
+	  call :Abort "Malformed Test Table entry.  Missing Test Command.  See test: '%TEST_DESCRIPTION%'.  Near line number: '%LINE_NO_CURRENT%'."
+      exit /b 1
+	)
+	
 exit /b 0
+
 
 ::-----------------------------------------------------------------------------
 ::- 
@@ -194,6 +218,7 @@ exit /b 0
 
   endlocal & set EXIT_LEVEL=%EXIT_LEVEL%
 exit/b %EXIT_LEVEL%
+
 
 ::-----------------------------------------------------------------------------
 ::- 
