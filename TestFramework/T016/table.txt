@@ -1,0 +1,2 @@
+This test should always succeed } NEQ 0 } exit /b 0
+ 
