@@ -56,7 +56,7 @@ goto Main
   echo set LOGGER_BIND=^<LogMethodsAbsoluteFilePath^>>&2
   echo ::>&2
   echo ::-- The absolute path, enclosed in double quotes, to the configuration file needed by the>&2
-  echo ::-- logger>&2
+  echo ::-- logger.>&2
   echo set LOGGER_CONFIG_FILE="<LogConfigurationAbsoluteFilePath>">&2
   echo ::>&2
   echo ::-- The absolute path, absent double quotes, to the directory that contains the GUID generation methods.>&2
@@ -68,8 +68,8 @@ exit /b 0
 
 
 :Main:
-  setlocal
-
+setlocal
+  
   if "%~1"==""       call :Abort "Please specify configuration file as first and only parameter.  Example follows:" & call :Help & exit /b 1
   if "%~1"=="/?"     call :Help & exit /b 0
   if not exist "%~1" call :Abort "Unable to locate provided configuration file:'%~1'.  Example follows:" & call :Help & exit /b 1
@@ -77,14 +77,6 @@ exit /b 0
   call "%~1"
   if errorlevel 1 call :Abort "Problem detected while processing paramters from configuration file '%~1'" & exit /b 1
 
-  if not exist "%BIND_ARGUMENT%\Check.cmd" call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check" & exit /b 1
-  
-  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY BASE_LAYER_FILE BASE_LAYER_SIZE
-  if errorlevel 1 (
-     call :Abort "Following configuration variables must be defined:'%ARGUMENT_CHECK_EMPTY%'"
-     call :Abort "Please correct errors in configuration file '%~1'"
-     exit /b 1
-  )
   ::-- Determine if the transaction identifier has been defined before the configuration of this module.
   ::-- If it has, this module is a more primative element of an aggregate transaction.  Therefore, its
   ::-- logged error messages will reflect the aggregate transaction id.  This allows the "tracing" of
@@ -97,9 +89,19 @@ exit /b 0
        if errorlevel 1 call :Abort "Generation of unique Transaction Id failed" & exit /b 1
     )
   )
+
+  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY BASE_LAYER_FILE BASE_LAYER_SIZE
+  if errorlevel 1 (
+    if not exist "%BIND_ARGUMENT%\Check.cmd" (
+      call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check"
+	  exit /b 1
+	)
+    call :Abort "Following configuration variables must be defined:'%ARGUMENT_CHECK_EMPTY%'"
+    call :Abort "Please correct errors in configuration file '%~1'"
+    exit /b 1
+  )
   ::-- Module is configured, now log the start of this effort.
   call :Inform "Started: Base VHD: '%BASE_LAYER_FILE%' creation"
-
   ::-- Create dispart create command file 
   set DISKPART_CREATE_CMD_FILE="%TEMP%\%~n0Script.%RANDOM%.txt"
   echo create vdisk file=%BASE_LAYER_FILE% maximum=%BASE_LAYER_SIZE% type=fixed > %DISKPART_CREATE_CMD_FILE%
