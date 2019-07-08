@@ -1,2 +1,2 @@
-@echo on
-"%~dp0\..\..\testFramework\Driver.cmd"  "%~dp0\config.cmd"
+@echo off
+"%~dp0\..\..\testFramework\Driver.cmd"  "%~dp0\config.cmd" > nul
