@@ -87,15 +87,6 @@ exit /b 0
   call "%~1"
   if errorlevel 1 call :Abort "Problem detected while processing paramters from configuration file '%~1'" & exit /b 1
 
-  if not exist "%BIND_ARGUMENT%\Check.cmd" call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check" & exit /b 1
-
-  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY TEST_TABLE_FILE
-  if errorlevel 1 (
-     call :Abort "Following configuration variables must be defined:'%ARGUMENT_CHECK_EMPTY%'"
-     call :Abort "Please correct errors in configuration file '%~1'"
-     exit /b 1
-  )
- 
   ::-- Determine if the transaction identifier has been defined before the configuration of this module.
   ::-- If it has, this module is a more primative element of an aggregate transaction.  Therefore, its
   ::-- logged error messages will reflect the aggregate transaction id.  This allows the "tracing" of
@@ -109,6 +100,14 @@ exit /b 0
     )
   )
 
+  if not exist "%BIND_ARGUMENT%\Check.cmd" call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check" & exit /b 1
+
+  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY TEST_TABLE_FILE
+  if errorlevel 1 (
+     call :Abort "Following configuration variables must be defined:'%ARGUMENT_CHECK_EMPTY%'"
+     call :Abort "Please correct errors in configuration file '%~1'"
+     exit /b 1
+  )
   ::-- Module is configured, now log the start of this effort.
   call :Inform "Started: Testing: '%TEST_TABLE_FILE%'"
 
@@ -143,7 +142,7 @@ exit /b %EXIT_LEVEL%
 
 
 :nullifyDeviceOpt:
-  setlocal
+setlocal
 
   set NULL_OPT=%~3
 
@@ -161,7 +160,7 @@ exit /b %EXIT_LEVEL%
       call :Abort "TEST_NULLIFY_OUTPUT option value unknown: '%NULL_OPT%'.  See help - /?" & exit /b 1
   )
 
-  endlocal & set %1=%SYSOUT_DEVICE%&set %2=%SYSERR_DEVICE%
+endlocal & set %1=%SYSOUT_DEVICE%&set %2=%SYSERR_DEVICE%
 exit /b 0
 
 
@@ -204,10 +203,16 @@ exit /b 0
 ::- the redirection operator ('>') specified for the Driver's
 ::- SYSOUT & SYSERR output streams so these redirection requests
 ::- don't interfer with the ones specified for the actual command.
+::-
+::- Note: if, endlocal, and set do not affect the "errorlevel" variable.
+:: 
+::- therefore the exit /b command below should return "0" when the local
+::- EXIT_LEVEL variable isn't defined.  The only time this variable should 
+::- be set, is when an error is detected.
 ::-  
 ::-----------------------------------------------------------------------------
 :runCapture:
-  setlocal
+setlocal
 
   call :runTest %~1 %~2
   
@@ -216,8 +221,11 @@ exit /b 0
 	set EXIT_LEVEL=1
   )
 
-  endlocal & set EXIT_LEVEL=%EXIT_LEVEL%
-exit/b %EXIT_LEVEL%
+endlocal & if "%EXIT_LEVEL%" EQU "1" (
+  set EXIT_LEVEL=1
+  exit /b 1
+)
+exit /b 0
 
 
 ::-----------------------------------------------------------------------------
@@ -232,13 +240,19 @@ exit/b %EXIT_LEVEL%
 ::- Note: use "call" keyword to invoke cmd.exe as this keyword will always 
 ::- sucessfully execute cmd.exe even if future versions of windows batch releases 
 ::- deviate from treating cmd as a built-in command.
-::-  
+::-
+::- Note: use "exit /b %errorlevel%" to communicate errorlevel across cmd.exe
+::- invocations, otherwise, errorlevel value probably represents last value
+::- before cmd.exe call.  Since this special case exists, simply always specifying
+::- %errorlevel% on exit will properly work everywhere :: don't have to remember
+::- it during special case.
+::-    
 ::-----------------------------------------------------------------------------
 :runTest: 
 
-call cmd /c "%TEST_COMMAND%"
+  call cmd /c "%TEST_COMMAND%"
 
-exit /b
+exit /b %errorlevel%
 
 
 :Abort:
