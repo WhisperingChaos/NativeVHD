@@ -50,7 +50,11 @@ goto Main
   echo set BASE_LAYER_FILE="<VHDBaseAbsoluteFilePath>">&2
   echo ::>&2
   echo ::-- The layer's size in MegaBytes (MB).>&2
-  echo set BASE_LAYER__SIZE=^<VHDBaseSizeMB^>>&2
+  echo set BASE_LAYER_SIZE=^<VHDBaseSizeMB^>>&2
+  echo ::>&2
+  echo ::-- The absolute path, enclosed in double quotes, to the configuration file needed by the>&2
+  echo ::-- dispart executor.>&2
+  echo set DISKPART_EXECUTOR_CONFIG_FILE="<DiskpartExecutorAbsoluteFilePath>">&2
   echo ::>&2
   echo ::-- The absolute path, absent double quotes, to the directory that contains the logging methods.>&2
   echo set LOGGER_BIND=^<LogMethodsAbsoluteFilePath^>>&2
@@ -70,51 +74,60 @@ exit /b 0
 :Main:
 setlocal
   
-  if "%~1"==""       call :Abort "Please specify configuration file as first and only parameter.  Example follows:" & call :Help & exit /b 1
-  if "%~1"=="/?"     call :Help & exit /b 0
-  if not exist "%~1" call :Abort "Unable to locate provided configuration file:'%~1'.  Example follows:" & call :Help & exit /b 1
-  
+  if "%~1"=="" (
+    call :Abort "Please specify configuration file as first and only parameter.  Example follows:"
+    call :Help
+    exit /b 1
+  )
+  if "%~1"=="/?" (
+    call :Help
+    exit /b 0
+  )
+  if not exist "%~1" (
+    call :Abort "Unable to locate provided configuration file:'%~1'.  Example follows:"
+    call :Help
+    exit /b 1
+  )
   call "%~1"
-  if errorlevel 1 call :Abort "Problem detected while processing paramters from configuration file '%~1'" & exit /b 1
-
+  if %errorlevel% neq 0 (
+    call :Abort "Problem detected while processing paramters from configuration file '%~1'"
+    exit /b 1
+  )
   ::-- Determine if the transaction identifier has been defined before the configuration of this module.
   ::-- If it has, this module is a more primative element of an aggregate transaction.  Therefore, its
   ::-- logged error messages will reflect the aggregate transaction id.  This allows the "tracing" of
   ::-- an aggregate transaction through all its primative modules as they generate messages during their
   ::-- execution with the shared transaction identifier.  Otherwise, this module is being executed
   ::-- as a stand alone transaction, therefore, generate its own unique transaction id.
-  if not "%GUID_BIND%" == "" (
-    if "%NHN.TRANSACTION_ID%"=="" (
+
+  if "%NHN.TRANSACTION_ID%"=="" (
+    if not "%GUID_BIND%" == "" (
        call "%GUID_BIND%\gen" NHN.TRANSACTION_ID
-       if errorlevel 1 call :Abort "Generation of unique Transaction Id failed" & exit /b 1
+       if %errorlevel% neq 0 ( 
+        call :Abort "Generation of unique Transaction Id failed"
+        exit /b 1
+      )
     )
   )
-
-  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY BASE_LAYER_FILE BASE_LAYER_SIZE
-  if errorlevel 1 (
+  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY BASE_LAYER_FILE BASE_LAYER_SIZE DISKPART_EXECUTOR_CONFIG_FILE
+  if %errorlevel% neq 0 (
     if not exist "%BIND_ARGUMENT%\Check.cmd" (
-      call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check"
-	  exit /b 1
+      call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check'"
+      exit /b 1
 	)
     call :Abort "Following configuration variables must be defined:'%ARGUMENT_CHECK_EMPTY%'"
     call :Abort "Please correct errors in configuration file '%~1'"
     exit /b 1
   )
   ::-- Module is configured, now log the start of this effort.
-  call :Inform "Started: Base VHD: '%BASE_LAYER_FILE%' creation"
-  ::-- Create dispart create command file 
-  set DISKPART_CREATE_CMD_FILE="%TEMP%\%~n0Script.%RANDOM%.txt"
-  echo create vdisk file=%BASE_LAYER_FILE% maximum=%BASE_LAYER_SIZE% type=fixed > %DISKPART_CREATE_CMD_FILE%
-  if not exist %DISKPART_CREATE_CMD_FILE% call :Abort "Could not create required Diskpart Command file named: '%DISKPART_CREATE_CMD_FILE%'" & exit /b 1
+  call :Inform "Started: Base VHD: " '%BASE_LAYER_FILE%' "creation"
+  
+  call %~dp0\DiskpartExecutor.cmd %DISKPART_EXECUTOR_CONFIG_FILE%
+  if %errorlevel% neq 0 exit /b 1
 
-  diskpart /s %DISKPART_CREATE_CMD_FILE% >nul
-  if %errorlevel% neq 0 call :Abort "Diskpart failed to create: '%BASE_LAYER_FILE%'. See contents of: '%DISKPART_CREATE_CMD_FILE%'" & exit /b 1
-
-  if not exist "%BASE_LAYER_FILE% call :Abort "Can't find newly created: '%BASE_LAYER_FILE%'. See contents of: '%DISKPART_CREATE_CMD_FILE%'" & exit /b 1
-
-  del %DISKPART_CREATE_CMD_FILE% >nul
-
-  call :Inform "Ended: Base VHD: '%BASE_LAYER_FILE%' creation: Successful"
+  call :Inform "Ended: Base VHD: '" %BASE_LAYER_FILE% "' creation: Successful"
+  
+endlocal
 exit /b 0
 
 
