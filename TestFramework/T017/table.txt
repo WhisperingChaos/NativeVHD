@@ -1,0 +1,1 @@
+Test handling unbalanced quoted " description and command values in abort message } NEQ 0 } echo " & exit /b 1
