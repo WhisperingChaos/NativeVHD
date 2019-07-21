@@ -186,11 +186,11 @@ exit /b 1
       exit /b 1
 	)
     if not defined TEST_CONDITION (
-	  call :Abort "Malformed Test Table entry.  Missing Test Condition to compare against errorlevel.  Examles: 'NEQ 1', 'EQU 0'.  See test: '%TEST_DESCRIPTION%'.   Near line number: '%LINE_NO_CURRENT%'."
+	  call :Abort "Malformed Test Table entry.  Missing Test Condition to compare against errorlevel.  Examles: 'NEQ 1', 'EQU 0'.  See test: '%TEST_DESCRIPTION:"=""%'.   Near line number: '%LINE_NO_CURRENT%'."
 	  exit /b 1
 	)
     if not defined TEST_COMMAND (
-	  call :Abort "Malformed Test Table entry.  Missing Test Command.  See test: '%TEST_DESCRIPTION%'.  Near line number: '%LINE_NO_CURRENT%'."
+	  call :Abort "Malformed Test Table entry.  Missing Test Command.  See test: '%TEST_DESCRIPTION:"=""%'.  Near line number: '%LINE_NO_CURRENT%'."
       exit /b 1
 	)
 	
@@ -204,11 +204,15 @@ exit /b 0
 ::- SYSOUT & SYSERR output streams so these redirection requests
 ::- don't interfer with the ones specified for the actual command.
 ::-
-::- Note: if, endlocal, and set do not affect the "errorlevel" variable.
-:: 
-::- therefore the exit /b command below should return "0" when the local
-::- EXIT_LEVEL variable isn't defined.  The only time this variable should 
-::- be set, is when an error is detected.
+::- Note: if, endlocal, and set do not affect the "errorlevel" variable. Therefore,
+::- the returned errorlevel must be altered to reflect he return code of the
+::- test's asserted errorlevel, not the return value of the command executed
+::- by the test.
+::-
+::- Note: the call :Abort below inserts escaping quotes (doubles quotes)
+::- and then encapsulates these values within quotes to ensure a balanced
+::- set of outer quotes.  If quotes aren't balanced, then it's very likely
+::- unbalanced quotes will prevent redirection of Abort message to SYSERR.
 ::-  
 ::-----------------------------------------------------------------------------
 :runCapture:
@@ -217,7 +221,7 @@ setlocal
   call :runTest %~1 %~2
   
   if %errorlevel% %TEST_CONDITION% (
-    call :Abort "Test: '%TEST_DESCRIPTION%' failed.  Command: '%TEST_COMMAND%'"
+    call :Abort "Test Table Description: '%TEST_DESCRIPTION:"=""%' failed.  Near line number: '%LINE_NO_CURRENT%'.  Command: '%TEST_COMMAND:"=""%'"
 	set EXIT_LEVEL=1
   )
 
