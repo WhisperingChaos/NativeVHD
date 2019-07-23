@@ -11,4 +11,4 @@ set TEST_NULLIFY_OUTPUT=BOTH
 ::
 ::-- Determine if running tests after a failure should continue.  Valid values: 'EXIT', or 'CONTINUE'.  Default is 'CONTINUE'.
 set TEST_ON_FAILURE=CONTINUE
-set VDISK_METHOD_PATH=%~dp0\..\..\vdisk
+set VDISK_METHOD_PATH=%~dp0\..\..\..\vdisk
