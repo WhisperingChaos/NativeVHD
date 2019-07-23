@@ -7,7 +7,7 @@ setlocal
   del %LOG_FILE% > nul 2> nul
   
   if not defined VDISK_METHOD_PATH (
-    set VDISK_METHOD_PATH=..\..\..\Vdisk\
+    set VDISK_METHOD_PATH=..\..\..\..\Vdisk\
   )
   call "%VDISK_METHOD_PATH%\DiskpartExecutor.cmd" "%~dp0\config.cmd"
   if %errorlevel% neq 0 exit /b 1

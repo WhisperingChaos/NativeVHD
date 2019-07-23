@@ -1,5 +1,5 @@
 ::-- The absolute path, without double quotes, to the Argument methods.
-set BIND_ARGUMENT=%~dp0\..\..\..\Argument
+set BIND_ARGUMENT=%~dp0\..\..\..\..\Argument
 ::
 ::-- The absolute path, without double quotes, to a command that generates a
 ::-- cohesive set of diskpart commands.  Generator takes no arguments and produces
@@ -12,7 +12,7 @@ set DISKPART_CMD_GENERATOR=%~dp0\GoodCommand.cmd
 ::-- A return value by the checker other than 0 signifies an error.
 set DISKPART_CONSTRAINT_CHECK=%~dp0\GoodCheck.cmd
 ::-- The absolute path, absent double quotes, to the directory that contains the logging methods.
-set LOGGER_BIND=%~dp0\..\..\..\Logger
+set LOGGER_BIND=%~dp0\..\..\..\..\Logger
 ::
 ::-- The absolute path, enclosed in double quotes, to the configuration file needed by the
 ::-- logger.

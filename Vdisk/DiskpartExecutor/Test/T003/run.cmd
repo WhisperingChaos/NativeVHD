@@ -7,7 +7,7 @@ setlocal
   if exist %LOG_FILE% del %LOG_FILE% > nul
   
   if not defined VDISK_METHOD_PATH (
-    set VDISK_METHOD_PATH=..\..\..\Vdisk\
+    set VDISK_METHOD_PATH=..\..\..\..\Vdisk\
   )
   call "%VDISK_METHOD_PATH%\DiskpartExecutor.cmd" "%~dp0\config.cmd"
  
