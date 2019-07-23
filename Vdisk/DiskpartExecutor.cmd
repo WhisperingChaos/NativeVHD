@@ -100,7 +100,7 @@ setlocal
   ::-- an aggregate transaction through all its primative modules as they generate messages during their
   ::-- execution with the shared transaction identifier.  Otherwise, this module is being executed
   ::-- as a stand alone transaction, therefore, generate its own unique transaction id.
-    if "%NHN.TRANSACTION_ID%"=="" (
+  if "%NHN.TRANSACTION_ID%"=="" (
     if not "%GUID_BIND%" == "" (
        call "%GUID_BIND%\gen" NHN.TRANSACTION_ID
        if errorlevel 1 call :Abort "Generation of unique Transaction Id failed" & exit /b 1
