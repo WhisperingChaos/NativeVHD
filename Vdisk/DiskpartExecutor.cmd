@@ -125,7 +125,7 @@ setlocal
     exit /b 1
   )
   ::-- Module is configured, now log the start of this effort.
-  call :Inform "Started: dispart command: " 'DISKPART_CMD_GENERATOR%' " execution."
+  call :Inform "Started: dispart command: '" "%DISKPART_CMD_GENERATOR%" "' execution."
   ::-- Create dispart create command file 
   set DISPART_FILE_PREAMBLE=%TEMP%\%~n0Script.%RANDOM%
   set DISKPART_CMD_FILE="%DISPART_FILE_PREAMBLE%.txt"
