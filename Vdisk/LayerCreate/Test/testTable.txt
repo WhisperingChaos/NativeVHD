@@ -1,0 +1,6 @@
+001 - Missing required configuration file } neq 0 } "%VDISK_METHOD_PATH%\LayerCreate.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify configuration file"
+002 - Log file generation } neq 0 } "%VDISK_METHOD_PATH%\LayerCreate\Test\T002\run.cmd"
+003 - GUID Log file generation } neq 0 } "%VDISK_METHOD_PATH%\LayerCreate\Test\T003\run.cmd"
+004 - Missing required BASE_LAYER_FILE, DERIVED_LAYER_FILE, and DISKPART_EXECUTOR_CONFIG_FILE } neq 0 } "%VDISK_METHOD_PATH%\LayerCreate.cmd" "%VDISK_METHOD_PATH%\LayerCreate\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*BASE_LAYER_FILE.*DERIVED_LAYER_FILE.*DISKPART_EXECUTOR_CONFIG_FILE"
+005 - Failure to create layer vhd. Missing BASE_LAYER_FILE - must run as administrator } neq 0 } "%VDISK_METHOD_PATH%\LayerCreate\Test\T005\run.cmd"
+006 - Successfully create layer vhd. - must run as administrator } neq 0 } "%VDISK_METHOD_PATH%\LayerCreate\Test\T006\run.cmd"
