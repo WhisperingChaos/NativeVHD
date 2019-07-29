@@ -137,8 +137,7 @@ exit /b 0
 
   call :Inform "Ended: Testing: '%TEST_TABLE_FILE%'"
 
-  endlocal & set EXIT_LEVEL=%EXIT_LEVEL%
-exit /b %EXIT_LEVEL%
+  endlocal & exit /b %EXIT_LEVEL%
 
 
 :nullifyDeviceOpt:
