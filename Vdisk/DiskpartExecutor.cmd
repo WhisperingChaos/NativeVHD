@@ -102,12 +102,15 @@ setlocal
   ::-- as a stand alone transaction, therefore, generate its own unique transaction id.
   if "%NHN.TRANSACTION_ID%"=="" (
     if not "%GUID_BIND%" == "" (
-       call "%GUID_BIND%\gen" NHN.TRANSACTION_ID
-       if errorlevel 1 call :Abort "Generation of unique Transaction Id failed" & exit /b 1
+      call "%GUID_BIND%\gen" NHN.TRANSACTION_ID
+      if %errorlevel% neq 0 ( 
+        call :Abort "Generation of unique Transaction Id failed"
+        exit /b 1
+      )
     )
   )
   call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY DISKPART_CMD_GENERATOR DISKPART_CONSTRAINT_CHECK
-  if errorlevel 1 (
+  if %errorlevel% neq 0 (
     if not exist "%BIND_ARGUMENT%\Check.cmd" (
       call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check'"
 	  exit /b 1
