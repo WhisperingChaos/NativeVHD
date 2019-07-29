@@ -1,0 +1,6 @@
+001 - Missing required configuration file } neq 0 } "%VDISK_METHOD_PATH%\Protect.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify configuration file"
+002 - Log file generation } neq 0 } "%VDISK_METHOD_PATH%\Protect\Test\T002\run.cmd"
+003 - GUID Log file generation } neq 0 } "%VDISK_METHOD_PATH%\Protect\Test\T003\run.cmd"
+004 - Missing required PROTECT_FILE, DERIVED_LAYER_FILE, and DISKPART_EXECUTOR_CONFIG_FILE } neq 0 } "%VDISK_METHOD_PATH%\Protect.cmd" "%VDISK_METHOD_PATH%\Protect\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*PROTECT_FILE"
+005 - Failure to protect vhd. Missing PROTECT_FILE } neq 0 } "%VDISK_METHOD_PATH%\Protect.cmd" "%VDISK_METHOD_PATH%\Protect\Test\T005\config.cmd" 2>&1 | findstr /R /C:"Abort.*PROTECT_FILE must exist:"
+006 - Successfully protected vhd. } neq 0 } "%VDISK_METHOD_PATH%\Protect\Test\T006\run.cmd"
