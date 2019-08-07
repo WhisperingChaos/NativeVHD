@@ -1,0 +1,6 @@
+001 - Missing required configuration file } neq 0 } "%VDISK_METHOD_PATH%\LayerMerge.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify configuration file"
+002 - Log file generation } neq 0 } "%VDISK_METHOD_PATH%\LayerMerge\Test\T002\run.cmd"
+003 - GUID Log file generation } neq 0 } "%VDISK_METHOD_PATH%\LayerMerge\Test\T003\run.cmd"
+004 - Missing required DERIVED_LAYER_FILE and DISKPART_EXECUTOR_CONFIG_FILE } neq 0 } call "%VDISK_METHOD_PATH%\LayerMerge.cmd" "%VDISK_METHOD_PATH%\LayerMerge\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*DERIVED_LAYER_FILE.*DISKPART_EXECUTOR_CONFIG_FILE"
+005 - DERIVED_LAYER_FILE doesn't exist. - must run as administrator } neq 0 } "%VDISK_METHOD_PATH%\LayerMerge\Test\T005\run.cmd"
+006 - Successfully merge DERIVED_LAYER_FILE into its immediate base/parent layer - must run as administrator } neq 0 } "%VDISK_METHOD_PATH%\LayerMerge\Test\T006\run.cmd"

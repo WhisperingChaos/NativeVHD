@@ -9,13 +9,16 @@ goto Main
   echo ::--  Author:	Richard Moyse>&2
   echo ::-->&2
   echo ::-- Purpose:>&2
-  echo ::--	  Given a child/derived differencing VHD, merge its contents with its>&2
+  echo ::--	  Given a layer - child/derived differencing VHD, merge its contents with its>&2
   echo ::--	  immediate parent VHD. Once merged, parent will be a mirror image>&2
   echo ::--	  of the child.>&2
   echo ::-->&2
   echo ::-- Assumes:>&2
   echo ::--   1. Executing script with Administrator privileges.>&2
   echo ::-- 	2. Child VHD has been at least formatted and recognized as a Volume.>&2
+  echo ::--   3. Parent VHD has been marked as readonly both at the file level and>&2
+  echo ::--      when attached as a drive.  This protects the viability of the child>&2
+  echo ::--      by preventing its corruption due to changes applied to the parent.>&2
   echo ::-->&2
   echo ::-- Input:>&2
   echo ::--   1. ^%1: Either:>&2
@@ -52,7 +55,7 @@ goto Main
   echo ::-- The absolute path, enclosed in double quotes, to the configuration file needed by the>&2
   echo ::-- dispart executor.>&2
   echo set DISKPART_EXECUTOR_CONFIG_FILE="<DiskpartExecutorAbsoluteFilePath>">&2
-  echo ::>&2 
+  echo ::>&2
   echo ::-- The absolute path, absent double quotes, to the directory that contains the logging methods.>&2
   echo set LOGGER_BIND=^<LogMethodsAbsoluteFilePath^>>&2
   echo ::>&2
@@ -113,7 +116,7 @@ setlocal
      exit /b 1
   )
   ::-- Module is configured, now log the start of this effort.
-  call :Inform "Started: Derived VHD:'" %DERIVED_LAYER_FILE% "' merge to parent"
+  call :Inform "Started: Layer VHD:'" %DERIVED_LAYER_FILE% "' merge to parent"
   
   if not exist %DERIVED_LAYER_FILE% (
     call :Abort "DERIVED_LAYER_FILE must exist to create new derived/child layer:'" %DERIVED_LAYER_FILE% "' does not exist or inaccessible due to permissions."
@@ -122,7 +125,7 @@ setlocal
   call %~dp0\DiskpartExecutor.cmd %DISKPART_EXECUTOR_CONFIG_FILE%
   if %errorlevel% neq 0 exit /b 1
   
-  call :Inform "Ended: Derived VHD:'" %DERIVED_LAYER_FILE% "' merge to parent: Successful"
+  call :Inform "Ended: Layer VHD:'" %DERIVED_LAYER_FILE% "' merge to parent: Successful"
 
 endlocal
 exit /b 0

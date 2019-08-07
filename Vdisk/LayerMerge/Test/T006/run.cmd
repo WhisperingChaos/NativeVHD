@@ -22,7 +22,7 @@ setlocal
     echo DERIVED_LAYER_FILE should exist, but it does not: %DERIVED_LAYER_FILE% >&2
 	  exit /b 1
   )
-  call "%VDISK_METHOD_PATH%\DerivedMerge.cmd" "%~dp0\config.cmd"
+  call "%VDISK_METHOD_PATH%\LayerMerge.cmd" "%~dp0\config.cmd"
 ::| findstr /R /C:"Inform.*Ended: Layer VHD:.*creation: Successful"
   if %errorlevel% NEQ 0 exit /b %errorlevel%
  
