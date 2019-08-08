@@ -147,6 +147,7 @@ setlocal
   ::-- Although successful, make sure output artifacts exist
   call "%DISKPART_CONSTRAINT_CHECK%"
   if %errorlevel% neq 0 (
+    call :Abort "Verification failed. Contents of: '" %DISKPART_CMD_LOG_FILE% "' and '" %DISKPART_CMD_FILE% "'" " might help debugging."
     exit /b 1
   )
   ::-- clean up temporary files
