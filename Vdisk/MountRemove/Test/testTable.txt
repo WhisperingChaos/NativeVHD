@@ -1,0 +1,7 @@
+001 - Missing required configuration file } neq 0 } "%VDISK_METHOD_PATH%\MountRemove.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify configuration file"
+002 - Log file generation } neq 0 } "%VDISK_METHOD_PATH%\MountRemove\Test\T002\run.cmd"
+003 - GUID Log file generation } neq 0 } "%VDISK_METHOD_PATH%\MountRemove\Test\T003\run.cmd"
+004 - Missing required MOUNT_REMOVE_VDISK_FILE and DISKPART_EXECUTOR_CONFIG_FILEDERIVED_LAYER_FILE } neq 0 } call "%VDISK_METHOD_PATH%\MountRemove.cmd" "%VDISK_METHOD_PATH%\MountRemove\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*MOUNT_REMOVE_VDISK_FILE.*DISKPART_EXECUTOR_CONFIG_FILE"
+005 - MOUNT_REMOVE_VDISK_FILE doesn't exist.} neq 0 } "%VDISK_METHOD_PATH%\MountRemove.cmd" "%VDISK_METHOD_PATH%\MountRemove\Test\T005\config.cmd" 2>&1 | findstr /R /C:"Abort.*MOUNT_REMOVE_VDISK_FILE must exist to be dismounted"
+006 - Successfully dismount an unmounted vdisk file. } neq 0 } "%VDISK_METHOD_PATH%\MountRemove\Test\T006\run.cmd"
+007 - Successfully dismount a mounted vdisk file. } neq 0 } "%VDISK_METHOD_PATH%\MountRemove\Test\T007\run.cmd"
