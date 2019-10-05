@@ -9,7 +9,12 @@ goto Main
   echo ::--  Author:	Richard Moyse>&2
   echo ::-->&2
   echo ::-- Purpose:>&2
-  echo ::--   Delete a VHD.  Works for layers tool.>&2
+  echo ::--   Delete a VHD.  Delete should erase a VHD unless it is either hidden>&2
+  echo ::--   or read only.  Use these file attributes to protect a VHD from being>&2
+  echo ::--   summarily destroyed.  Delete removes vdisks with no partitions as well>&2
+  echo ::--   as those with partitions.  If the partitions are mounted, Delete>&2
+  echo ::--   will close and dismount all mounts before deleting the vdisk.>&2
+  echo ::--   Delete also operates on a layer.>&2
   echo ::-->&2
   echo ::-- Assumes:>&2
   echo ::--   1.  Executing script with Administrator privileges.>&2
@@ -113,15 +118,29 @@ setlocal
     exit /b 1
   )
   ::-- Module is configured, now log the start of this effort.
-  call :Inform "Started: VHD: " '%DELETE_VHD_FILE%' "delete"
+  call :Inform "Started: VHD: '" %DELETE_VHD_FILE% "' delete"
   
   if not exist %DELETE_VHD_FILE% goto success
+
+  for %%s in (%DELETE_VHD_FILE%) do set DELETE_VHD_FILE_NAME_TYPE="%%~nxs"
+
+  dir /AH %DELETE_VHD_FILE% 2>nul | findstr /I /C:%DELETE_VHD_FILE_NAME_TYPE% >nul
+  if %errorlevel% equ 0 (
+    call :Abort "DELETE_VHD_FILE '" %DELETE_VHD_FILE% "' is delete protected (hidden) use 'attrib -h' to make file deletion possible."
+    exit /b 1
+  )
+  dir /AR %DELETE_VHD_FILE% 2>nul | findstr /I /C:%DELETE_VHD_FILE_NAME_TYPE% >nul
+  if %errorlevel% equ 0 (
+    call :Abort "DELETE_VHD_FILE '" %DELETE_VHD_FILE% "' is delete protected (read only) use ProtectWithdrawal.cmd to make file deletion possible."
+    exit /b 1
+  )
   del %DELETE_VHD_FILE% >nul 2>nul
+
   if not exist %DELETE_VHD_FILE% goto success
-  ::-- simple delete failed try to unmount then delete
+  ::-- simple delete failed try detach then delete
   call %~dp0\DiskpartExecutor.cmd %DISKPART_EXECUTOR_CONFIG_FILE%
   if %errorlevel% neq 0 exit /b 1
-
+  
 :success:
   call :Inform "Ended: Base VHD: '" %DELETE_VHD_FILE% "' deletion: Successful"
   
