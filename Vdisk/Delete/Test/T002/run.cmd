@@ -2,7 +2,7 @@
 setlocal
 
   call "%~dp0\config.cmd"
-  if %errorlevel% NEQ 0 exit /b %errorlevel%
+  if %errorlevel% NEQ 0 exit /b 1
 
   del %LOG_FILE% > nul 2> nul
 
