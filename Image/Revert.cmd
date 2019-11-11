@@ -123,18 +123,18 @@ setlocal
     call :Abort "REVERT_CANONICAL_BASE_FILE must exist to be reverted:'" %REVERT_CANONICAL_BASE_FILE% "' does not exist or inaccessible due to permissions."
     exit /b 1
   )
-  for "/F tokens=1,2*" %%k in ('call "%BIND_VDISK%LayerCanonicalParentPathGet" %LAYER_CANONICAL_PARENT_PATH_GET_CONFIG% ^| findstr /V /R /C:"^set REVERT_BASE_FILE=.*') do (
-    call :CanonicalMatch %%k %%l || exit /b 1
+  for /F "tokens=1* delims=" %%k in ( 'call "%BIND_VDISK%LayerCanonicalParentPathGet.cmd" "%~dpn0\Subroutine\configLayerCanonicalParentPathGet.cmd" ^| findstr /R /C:"^set REVERT_BASE_FILE=.*"' ) do (
+    call :CanonicalMatch %%k || exit /b 1
   )
-    ::-- Module is configured, now log the start of this effort.
+  ::-- Module is configured, now log the start of this effort.
   call :Inform "Started: Image: " '%REVERT_LAYER_FILE%' " revert"
   
   set DELETE_VHD_FILE=%REVERT_LAYER_FILE%
-  call "%BIND_VDISK%Delete.cmd" "%dpn0\Subroutine\configDelete.cmd"
+  call "%BIND_VDISK%Delete.cmd" "%~dpn0\Subroutine\configDelete.cmd"
   
-  set BASE_LAYER_FILE=%REVERT_LAYER_FILE%
-  set DERIVED_LAYER_FILE=%REVERT_CANONICAL_BASE_FILE%
-  call "%BIND_VDISK%LayerCreate.cmd" "%dpn0\Subroutine\configLayerCreate.cmd"
+  set BASE_LAYER_FILE=%REVERT_CANONICAL_BASE_FILE%
+  set DERIVED_LAYER_FILE=%REVERT_LAYER_FILE%
+  call "%BIND_VDISK%LayerCreate.cmd" "%~dpn0\Subroutine\configLayerCreate.cmd"
   
   call :Inform "Ended: Image: '" %REVERT_LAYER_FILE% "' revert: Successful"
   
@@ -144,12 +144,12 @@ exit /b 0
 
 :CanonicalMatch:
 setlocal
-  
+
   if not "%1" == "set" (
     call :Abort "Logic error - expected 'set' but encountered: '" %1 "'"
   )
-  %1 %2
-  if not %REVERT_CANONICAL_BASE_FILE% == %REVERT_CANONICAL_BASE_FILE% (
+  %1 %2=%3
+  if not %REVERT_BASE_FILE% == %REVERT_CANONICAL_BASE_FILE% (
     call :Abort "Canonical path to base layer REVERT_CANONICAL_BASE_FILE: '" %REVERT_CANONICAL_BASE_FILE% "' different from actual value: '" %REVERT_CANONICAL_BASE_FILE% "' referenced by REVERT_LAYER_FILE: '" %REVERT_LAYER_FILE% "'"
     exit /b 1
   )
