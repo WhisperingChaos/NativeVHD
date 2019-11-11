@@ -24,12 +24,15 @@ setlocal
   call "%VDISK_METHOD_PATH%\LayerCreate.cmd" "%~dp0\configLayerCreate.cmd"
   if %errorlevel% NEQ 0 exit /b 1
 
-  for /F "tokens=*, delims=" %%s in ( 'call "%VDISK_METHOD_PATH%\LayerCanonicalParentPathGet.cmd" "%~dp0\configLayerCanonicalParentPathGet.cmd" ^| findstr /R /C:"^set TEST_CANONICAL_PARENT_NAME=....*") do %%S
+  set LAYER_CANONICAL_LAYER_FILE=%TEST_LAYER_VHD_FILE%
+  for /F "tokens=1* delims=" %%s in ( 'call "%VDISK_METHOD_PATH%\LayerCanonicalParentPathGet.cmd" "%~dp0\configLayerCanonicalParentPathGet.cmd" ^| findstr /R /C:"^set TEST_CANONICAL_PARENT_NAME=....*"') do %%s
   if %errorlevel% NEQ 0 exit /b 1
 
   if not defined IMAGE_METHOD_PATH (
     set IMAGE_METHOD_PATH=%~dp0\..\..\..\..\Image\
   )
+  set REVERT_LAYER_FILE=%TEST_LAYER_VHD_FILE%
+  set REVERT_CANONICAL_BASE_FILE=%TEST_CANONICAL_PARENT_NAME%
   call "%IMAGE_METHOD_PATH%\Revert.cmd" "%~dp0\config.cmd"
   if %errorlevel% NEQ 0 exit /b 1
 
