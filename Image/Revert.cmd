@@ -105,7 +105,7 @@ setlocal
       )
     )
   )
-  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY REVERT_LAYER_FILE REVERT_CANONICAL_BASE_FILE
+  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY REVERT_LAYER_FILE REVERT_CANONICAL_BASE_FILE BIND_VDISK
   if %errorlevel% neq 0 (
     if not exist "%BIND_ARGUMENT%\Check.cmd" (
       call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check'"
@@ -131,10 +131,12 @@ setlocal
   
   set DELETE_VHD_FILE=%REVERT_LAYER_FILE%
   call "%BIND_VDISK%Delete.cmd" "%~dpn0\Subroutine\configDelete.cmd"
-  
+  if %errorlevel% neq 0 exit /b 1
+
   set BASE_LAYER_FILE=%REVERT_CANONICAL_BASE_FILE%
   set DERIVED_LAYER_FILE=%REVERT_LAYER_FILE%
   call "%BIND_VDISK%LayerCreate.cmd" "%~dpn0\Subroutine\configLayerCreate.cmd"
+  if %errorlevel% neq 0 exit /b 1
   
   call :Inform "Ended: Image: '" %REVERT_LAYER_FILE% "' revert: Successful"
   

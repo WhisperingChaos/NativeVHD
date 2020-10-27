@@ -1,13 +1,11 @@
+::-- The absolute path, without double quotes, to the Argument methods.
 set BIND_ARGUMENT=%BIND_ARGUMENT%
 ::
-::-- Required: The absolute path, enclosed in double quotes, to the VHD being formatted.
-set DISK_FORMAT_FILE=%DISK_FORMAT_FILE%
+::-- Required: The absolute path, enclosed in double quotes, to the VHD being mounted.
+set MOUNT_VDISK_FILE=%MOUNT_VDISK_FILE%
 ::
-::-- Optional: The volume label to assign the VHD, enclosed in double quotes.
-set DISK_FORMAT_VOLUME_LABEL=%DISK_FORMAT_VOLUME_LABEL%
-::
-::-- Optional: Destroy an existing partition: "NO" or "YES".  Defaults to "NO".
-set DISK_FORMAT_DESTROY_EXISTING=%DISK_FORMAT_DESTROY_EXISTING%
+::-- Required: The drive letter (only - no colon ':') to assign the mounted VHD.
+set MOUNT_VDISK_DRIVE_LETTER=%MOUNT_VDISK_DRIVE_LETTER%
 ::
 ::-- The absolute path, absent double quotes, to the directory that contains the logging methods.
 set LOGGER_BIND=%LOGGER_BIND%

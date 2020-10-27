@@ -13,9 +13,8 @@ setlocal
     set IMAGE_METHOD_PATH=%~dp0..\..\..\..\Image\
   )
   call "%IMAGE_METHOD_PATH%\Revert.cmd" "%~dp0\config.cmd" 2>&1 | findstr /R /C:"Abort.*REVERT_CANONICAL_BASE_FILE must exist to be reverted"
-  if %errorlevel% NEQ 0 (
-    exit /b %errorlevel%
-  )
+  if %errorlevel% NEQ 0 exit /b %errorlevel%
+  
   del %REVERT_LAYER_FILE% > nul
   
 endlocal

@@ -1,6 +1,8 @@
 @echo off
 setlocal
 
+  set BIND_ARGUMENT=%~dp0\..\..\..\..\Argument
+
   if not defined VDISK_METHOD_PATH (
     set VDISK_METHOD_PATH=%~dp0\..\..\..\..\Vdisk\
   )

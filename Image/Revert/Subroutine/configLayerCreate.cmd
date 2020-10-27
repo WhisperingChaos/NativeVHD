@@ -1,19 +1,18 @@
-::-- The absolute path, enclosed in double quotes, to the pre-existing base/parent VHD.
+::-- The absolute path, without double quotes, to the Argument methods.
+set BIND_ARGUMENT=%BIND_ARGUMENT%
+::
+::-- The absolute filepath, enclosed in double quotes, to a preexisting base/parent VHD.
 set BASE_LAYER_FILE=%BASE_LAYER_FILE%
 ::
-::-- The absolute path, enclosed in double quotes, to the Layered VHD being created.
+::-- The absolute filepath, enclosed in double quotes, for the new derived/child layer VHD.
 set DERIVED_LAYER_FILE=%DERIVED_LAYER_FILE%
+::
+::-- The absolute path, absent double quotes, to the directory that contains the logging methods.
+set LOGGER_BIND=%LOGGER_BIND%
+::
 ::-- The absolute path, enclosed in double quotes, to the configuration file needed by the
-::-- dispart executor.
+::-- logger.
+set LOGGER_CONFIG_FILE=%LOGGER_CONFIG_FILE%
 ::
-set DISKPART_EXECUTOR_CONFIG_FILE="%~f0"
-::-- The absolute path, without double quotes, to a command that generates a
-::-- cohesive set of diskpart commands.  Generator takes no arguments and produces
-::-- commands as strings to SYSOUT.
-set DISKPART_CMD_GENERATOR=%BIND_VDISK%\LayerCreate\subroutine\diskpartCmdGen.cmd
-::
-::-- The absolute path, without double quotes, to a command that verifies diskpart's
-::-- expected outcome.  Checker accepts no arguments - caller must use no overlapping
-::-- environment variables that it sets before calling %~f0 to implement the Checker.
-::-- A return value by the checker other than 0 signifies an error.
-set DISKPART_CONSTRAINT_CHECK=%BIND_VDISK%\LayerCreate\subroutine\diskpartVerify.cmd
+::-- The absolute path, absent double quotes, to the directory that contains the GUID generation methods.
+set GUID_BIND=%GUID_BIND%

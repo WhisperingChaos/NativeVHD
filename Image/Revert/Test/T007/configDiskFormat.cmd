@@ -1,5 +1,5 @@
 ::-- The absolute path, without double quotes, to the Argument methods.
-set BIND_ARGUMENT=%~dp0\..\..\..\..\Argument
+set BIND_ARGUMENT=%BIND_ARGUMENT%
 ::
 ::-- Required: The absolute path, enclosed in double quotes, to the VHD being formatted.
 set DISK_FORMAT_FILE=%TEST_VHD_FILE%

@@ -6,4 +6,3 @@ set BASE_LAYER_FILE=%BASE_LAYER_FILE%
 ::-- The absolute path, enclosed in double quotes, to the Layered VHD being created.
 set DERIVED_LAYER_FILE=%DERIVED_LAYER_FILE%
 ::
-exit /b 0
