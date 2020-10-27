@@ -1,0 +1,7 @@
+001 - Missing required configuration file } neq 0 } "%IMAGE_METHOD_PATH%\Merge.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify configuration file"
+002 - Log file generation } neq 0 } "%IMAGE_METHOD_PATH%\Merge\Test\T002\run.cmd"
+003 - GUID Log file generation } neq 0 } "%IMAGE_METHOD_PATH%\Merge\Test\T003\run.cmd"
+004 - Missing required MERGE_LAYER_FILE MERGE_CANONICAL_BASE_FILE BIND_VDISK } neq 0 } "%IMAGE_METHOD_PATH%\Merge.cmd" "%IMAGE_METHOD_PATH%\Merge\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Merge.cmd.*Following configuration variables must be defined:.*MERGE_LAYER_FILE MERGE_CANONICAL_BASE_FILE BIND_VDISK"
+005 - REVERT_LAYER_FILE must exist.} neq 0 } "%IMAGE_METHOD_PATH%\Merge\Test\T005\run.cmd"
+006 - REVERT_CANONICAL_BASE_FILE must exist.} neq 0 } "%IMAGE_METHOD_PATH%\Merge\Test\T006\run.cmd"
+007 - Merge an unformatted VHD} neq 0 } "%IMAGE_METHOD_PATH%\Merge\Test\T007\run.cmd"
