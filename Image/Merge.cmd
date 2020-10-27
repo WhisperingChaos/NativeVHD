@@ -2,72 +2,73 @@
 goto Main
 
 :Help:
-  echo ::----------------------------------------------------------------------------->&2
-  echo ::-->&2
-  echo ::--  Module:	%~f0>&2
-  echo ::--  Version:	1.0>&2
-  echo ::--  Author:	Richard Moyse>&2
-  echo ::-->&2
-  echo ::-- Purpose:>&2
-  echo ::--   Integrate derived image state into its base image by merging the VHD>&2
-  echo ::--   the protective, child VHD layer into its corresponding parent.>&2  After>&2
-  echo ::--   a successful merge, delete the derived image then recreate it.  Why delete it?>&2
-  echo ::--   It returns disk space back to the drive.  Also, one can gauge the difference>&2
-  echo ::--   between a derived image and its base by simply viewing the size of the derived>&2
-  echo ::--   one.>&2
-  echo ::-->&2
-  echo ::-- Assumes:>&2
-  echo ::--   1. Executing script with Administrator privileges.>&2
-  echo ::--   2. Depends on Vdisk utilities.>&2
-  echo ::-->&2
-  echo ::-- Input:>&2
-  echo ::--   1. ^%1: Either:>&2
-  echo ::--     The full path name to a configuration file containing	argument values.>&2
-  echo ::--	"/?" displays the "help".>&2
-  echo ::-->&2
-  echo ::-- Output:>&2
-  echo ::--   1. errorlevel:>&2
-  echo ::--	0: Successful execution of "/?">&2
-  echo ::--     1: Failure>&2
-  echo ::-->&2
-  echo ::----------------------------------------------------------------------------->&2
-  echo ::>&2
-  echo ::>&2
-  echo ::----------------------------------------------------------------------------->&2
-  echo ::-- Configuration file settings needed by the %~f0 script.>&2
-  echo ::-- This script is called from the same command processor as the %~f0 script>&2
-  echo ::-- Therefore, you can use other environment variables within this command process,>&2
-  echo ::-- like the user specific %%TEMP%% variable, and it will refer to the same one visible to the >&2
-  echo ::-- script.>&2
-  echo ::-->&2
-  echo ::-- Do not code a startlocal or endlocal within this script, at least at this top most level,>&2
-  echo ::-- as it will erase the values set by the script.>&2
-  echo ::----------------------------------------------------------------------------->&2
-  echo ::>&2
-  echo ::-- Required: The absolute path, without double quotes, to the Argument methods.>&2
-  echo set BIND_ARGUMENT=^<ArgumentMethodsAbsoluteFilePath^>>&2
-  echo ::>&2
-  echo ::-- Required: The absolute path, without double quotes, to the Vdisk methods.>&2
-  echo set BIND_VDISK=^<VdiskMethodsAbsoluteFilePath^>>&2
-  echo ::>&2
-  echo ::-- Required: The absolute path, enclosed in double quotes, to the VHD layer being reverted.>&2
-  echo set MERGE_LAYER_FILE="<VHDAbsoluteFilePath>">&2
-  echo ::>&2
-  echo ::-- Required: The absolute path, enclosed in double quotes, to the immediate parent of the VHD layer.>&2
-  echo set MERGE_CANONICAL_BASE_FILE="<VHDAbsoluteFilePath>">&2
-  echo ::>&2
-  echo ::-- Optional: The absolute path, absent double quotes, to the directory that contains the logging methods.>&2
-  echo set LOGGER_BIND=^<LogMethodsAbsoluteFilePath^>>&2
-  echo ::>&2
-  echo ::-- Optional: The absolute path, enclosed in double quotes, to the configuration file needed by the>&2
-  echo ::-- logger.>&2
-  echo set LOGGER_CONFIG_FILE="<LogConfigurationAbsoluteFilePath>">&2
-  echo ::>&2
-  echo ::-- Optional: The absolute path, absent double quotes, to the directory that contains the GUID generation methods.>&2
-  echo set GUID_BIND=^<GUIDmethodsAbsoluteFilePath^>>&2
-  echo ::>&2
-  echo exit /b 0 >&2
-
+(
+  echo ::-----------------------------------------------------------------------------
+  echo ::--
+  echo ::--  Module:	%~f0
+  echo ::--  Version:	1.0
+  echo ::--  Author:	Richard Moyse
+  echo ::--
+  echo ::-- Purpose:
+  echo ::--   Integrate derived image state into its base image by merging the
+  echo ::--   protective, child VHD layer into its corresponding parent.  After
+  echo ::--   a successful merge, delete the derived image then recreate it.  Why delete it?
+  echo ::--   It returns disk space back to the drive.  Also, one can gauge the difference
+  echo ::--   between a derived image and its base by simply viewing the size of the derived
+  echo ::--   one.
+  echo ::--
+  echo ::-- Assumes:
+  echo ::--   1. Executing script with Administrator privileges.
+  echo ::--   2. Depends on Vdisk utilities.
+  echo ::--
+  echo ::-- Input:
+  echo ::--   1. ^%1: Either:
+  echo ::--      - The full path name to a configuration file containing argument values.
+  echo ::--      - "/?" displays the "help".
+  echo ::--
+  echo ::-- Output:
+  echo ::--   1. errorlevel:
+  echo ::--      0: Successful execution
+  echo ::--      1: Failure
+  echo ::--
+  echo ::-----------------------------------------------------------------------------
+  echo ::
+  echo ::
+  echo ::-----------------------------------------------------------------------------
+  echo ::-- Configuration file settings needed by the %~f0 script.
+  echo ::-- This script is called from the same command processor as the %~f0 script
+  echo ::-- Therefore, you can use other environment variables within this command process,
+  echo ::-- like the user specific %%TEMP%% variable, and it will refer to the same one visible to the 
+  echo ::-- script.
+  echo ::--
+  echo ::-- Do not code a startlocal or endlocal within this script, at least at this top most level,
+  echo ::-- as it will erase the values set by the script.
+  echo ::-----------------------------------------------------------------------------
+  echo ::
+  echo ::-- Required: The absolute path, without double quotes, to the Argument methods.
+  echo set BIND_ARGUMENT=^<ArgumentMethodsAbsoluteFilePath^>
+  echo ::
+  echo ::-- Required: The absolute path, without double quotes, to the Vdisk methods.
+  echo set BIND_VDISK=^<VdiskMethodsAbsoluteFilePath^>
+  echo ::
+  echo ::-- Required: The absolute path, enclosed in double quotes, to the VHD layer being reverted.
+  echo set MERGE_LAYER_FILE="<VHDAbsoluteFilePath>"
+  echo ::
+  echo ::-- Required: The absolute path, enclosed in double quotes, to the immediate parent of the VHD layer.
+  echo set MERGE_CANONICAL_BASE_FILE="<VHDAbsoluteFilePath>"
+  echo ::
+  echo ::-- Optional: The absolute path, absent double quotes, to the directory that contains the logging methods.
+  echo set LOGGER_BIND=^<LogMethodsAbsoluteFilePath^>
+  echo ::
+  echo ::-- Optional: The absolute path, enclosed in double quotes, to the configuration file needed by the
+  echo ::-- logger.
+  echo set LOGGER_CONFIG_FILE="<LogConfigurationAbsoluteFilePath>"
+  echo ::
+  echo ::-- Optional: The absolute path, absent double quotes, to the directory that contains the GUID generation methods.
+  echo set GUID_BIND=^<GUIDmethodsAbsoluteFilePath^>
+  echo ::
+  echo exit /b 0 
+)>&2
 exit /b 0
 
 
