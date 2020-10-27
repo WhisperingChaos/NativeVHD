@@ -64,10 +64,6 @@ goto Main
   echo ::-- Otherwise, the provided variable's value will remain untouched.
   echo set LAYER_CANONICAL_OUTPUT_PARENT_FILE="<EnvironmentVariableName>">&2
   echo ::>&2
-  echo ::-- Required: The absolute path, enclosed in double quotes, to the configuration file needed by the>&2
-  echo ::-- dispart executor.>&2
-  echo set DISKPART_EXECUTOR_CONFIG_FILE="<DiskpartExecutorAbsoluteFilePath>">&2
-  echo ::>&2
   echo ::-- Optional: The absolute path, absent double quotes, to the directory that contains the logging methods.>&2
   echo set LOGGER_BIND=^<LogMethodsAbsoluteFilePath^>>&2
   echo ::>&2
@@ -117,7 +113,7 @@ setlocal
       if errorlevel 1 call :Abort "Generation of unique Transaction Id failed" & exit /b 1
     )
   )
-  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY LAYER_CANONICAL_LAYER_FILE LAYER_CANONICAL_OUTPUT_PARENT_FILE DISKPART_EXECUTOR_CONFIG_FILE
+  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY LAYER_CANONICAL_LAYER_FILE LAYER_CANONICAL_OUTPUT_PARENT_FILE
   if errorlevel 1 (
       if not exist "%BIND_ARGUMENT%\Check.cmd" (
       call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check'"
@@ -135,7 +131,7 @@ setlocal
     call :Abort "LAYER_CANONICAL_LAYER_FILE must exist to obtain its base VHD'" %LAYER_CANONICAL_LAYER_FILE% "' does not exist or inaccessible due to permissions."
     exit /b 1
   )
-  call %~dp0\DiskpartExecutor.cmd %DISKPART_EXECUTOR_CONFIG_FILE%
+  call %~dp0\DiskpartExecutor.cmd %~dpn0\Subroutine\diskpartConfig.cmd
   if %errorlevel% neq 0 exit /b 1
   
   call :Inform "Ended: " %LAYER_CANONICAL_MESSAGE% ": Successful"

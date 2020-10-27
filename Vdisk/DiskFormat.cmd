@@ -55,10 +55,6 @@ goto Main
   echo ::-- Optional: Destroy an existing partition: "NO" or "YES".  Defaults to "NO".>&2
   echo set DISK_FORMAT_DESTROY_EXISTING="NO">&2
   echo ::>&2
-  echo ::-- The absolute path, enclosed in double quotes, to the configuration file needed by the>&2
-  echo ::-- dispart executor.>&2
-  echo set DISKPART_EXECUTOR_CONFIG_FILE="<DiskpartExecutorAbsoluteFilePath>">&2
-  echo ::>&2
   echo ::-- The absolute path, absent double quotes, to the directory that contains the logging methods.>&2
   echo set LOGGER_BIND=^<LogMethodsAbsoluteFilePath^>>&2
   echo ::>&2
@@ -111,7 +107,7 @@ setlocal
       )
     )
   )
-  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY DISK_FORMAT_FILE DISKPART_EXECUTOR_CONFIG_FILE
+  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY DISK_FORMAT_FILE
   if %errorlevel% neq 0 (
     if not exist "%BIND_ARGUMENT%\Check.cmd" (
       call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check'"
@@ -131,7 +127,7 @@ setlocal
   ::-- Can't circumvent as windows hardware device scanner detects this issue
   ::-- for attached vdisks and this process shouldn't terminate and restart
   ::-- this service.
-  call %~dp0\DiskpartExecutor.cmd %DISKPART_EXECUTOR_CONFIG_FILE%
+  call %~dp0\DiskpartExecutor.cmd "%~dpn0\Subroutine\diskpartConfig.cmd"
   if %errorlevel% neq 0 exit /b 1
 
   call :Inform "Ended: VHD: '" %DISK_FORMAT_FILE% "' format: Successful"

@@ -44,15 +44,11 @@ goto Main
   echo ::-- as it will erase the values set by the script.>&2
   echo ::----------------------------------------------------------------------------->&2
   echo ::>&2
-  echo ::-- The absolute path, without double quotes, to the Argument methods.>&2
+  echo ::-- Required: The absolute path, without double quotes, to the Argument methods.>&2
   echo set BIND_ARGUMENT=^<ArgumentCheckAbsoluteFilePath^>>&2
   echo ::>&2
-  echo ::-- The absolute path, enclosed in double quotes, to the VHD being created.>&2
+  echo ::-- Required: The absolute path, enclosed in double quotes, to the VHD being created.>&2
   echo set DELETE_VHD_FILE="<VHDBaseAbsoluteFilePath>">&2
-  echo ::>&2
-  echo ::-- The absolute path, enclosed in double quotes, to the configuration file needed by the>&2
-  echo ::-- dispart executor.>&2
-  echo set DISKPART_EXECUTOR_CONFIG_FILE="<DiskpartExecutorAbsoluteFilePath>">&2
   echo ::>&2
   echo ::-- The absolute path, absent double quotes, to the directory that contains the logging methods.>&2
   echo set LOGGER_BIND=^<LogMethodsAbsoluteFilePath^>>&2
@@ -107,7 +103,7 @@ setlocal
       )
     )
   )
-  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY DELETE_VHD_FILE DISKPART_EXECUTOR_CONFIG_FILE
+  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY DELETE_VHD_FILE
   if %errorlevel% neq 0 (
     if not exist "%BIND_ARGUMENT%\Check.cmd" (
       call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check'"
@@ -138,7 +134,7 @@ setlocal
 
   if not exist %DELETE_VHD_FILE% goto success
   ::-- simple delete failed try detach then delete
-  call %~dp0\DiskpartExecutor.cmd %DISKPART_EXECUTOR_CONFIG_FILE%
+  call %~dp0\DiskpartExecutor.cmd "%~dp0\Delete\Subroutine\diskpartConfig.cmd"
   if %errorlevel% neq 0 exit /b 1
   
 :success:

@@ -48,11 +48,7 @@ goto Main
   echo set MOUNT_VDISK_FILE="<VHDAbsoluteFilePath>">&2
   echo ::>&2
   echo ::-- Required: The drive letter (only - no colon ':') to assign the mounted VHD.>&2
-  echo set MOUNT_VDISK_DRIVE_LETTER=<DriveLetter>>&2
-  echo ::>&2
-  echo ::-- The absolute path, enclosed in double quotes, to the configuration file needed by the>&2
-  echo ::-- dispart executor.>&2
-  echo set DISKPART_EXECUTOR_CONFIG_FILE="<DiskpartExecutorAbsoluteFilePath>">&2
+  echo set MOUNT_VDISK_DRIVE_LETTER=^<DriveLetter^>>&2
   echo ::>&2
   echo ::-- The absolute path, absent double quotes, to the directory that contains the logging methods.>&2
   echo set LOGGER_BIND=^<LogMethodsAbsoluteFilePath^>>&2
@@ -105,7 +101,7 @@ setlocal
       )
     )
   )
-  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY MOUNT_VDISK_FILE MOUNT_VDISK_DRIVE_LETTER DISKPART_EXECUTOR_CONFIG_FILE
+  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY MOUNT_VDISK_FILE MOUNT_VDISK_DRIVE_LETTER
   if %errorlevel% neq 0 (
     if not exist "%BIND_ARGUMENT%\Check.cmd" (
       call :Abort "Failed to bind argument check.  No Check method at filepath:'%BIND_ARGUMENT%\Check'"
@@ -131,7 +127,7 @@ setlocal
   ::-- Module is configured, now log the start of this effort.
   call :Inform "Started: VHD: '" %MOUNT_VDISK_FILE% "' mount"
 
-  call %~dp0\DiskpartExecutor.cmd %DISKPART_EXECUTOR_CONFIG_FILE%
+  call %~dp0\DiskpartExecutor.cmd "%~dpn0\Subroutine\diskpartConfig.cmd"
   if %errorlevel% neq 0 exit /b 1
   
   call :Inform "Ended: VHD: '" %MOUNT_VDISK_FILE% "' mount: Successful"

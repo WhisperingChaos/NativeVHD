@@ -1,5 +1,5 @@
 001 - Missing required configuration file } neq 0 } "%BASE_CREATE_PATH%\BaseCreate.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify configuration file"
 002 - Log file generation } neq 0 } "%BASE_CREATE_PATH%\BaseCreate\Test\T002\run.cmd"
 003 - GUID Log file generation } neq 0 } "%BASE_CREATE_PATH%\BaseCreate\Test\T003\run.cmd"
-004 - Missing required BASE_LAYER_FILE, BASE_LAYER_SIZE, and DISKPART_EXECUTOR_CONFIG_FILE } neq 0 } "%BASE_CREATE_PATH%\BaseCreate.cmd" "%BASE_CREATE_PATH%\BaseCreate\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*BASE_LAYER_FILE.*BASE_LAYER_SIZE.*DISKPART_EXECUTOR_CONFIG_FILE"
+004 - Missing required BASE_LAYER_FILE, BASE_LAYER_SIZE } neq 0 } "%BASE_CREATE_PATH%\BaseCreate.cmd" "%BASE_CREATE_PATH%\BaseCreate\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*BASE_LAYER_FILE.*BASE_LAYER_SIZE"
 005 - Successfully create vhd - must run as asministrator } neq 0 } "%BASE_CREATE_PATH%\BaseCreate\Test\T005\run.cmd"

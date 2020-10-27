@@ -44,28 +44,28 @@ goto Main
   echo ::-- as it will erase the values set by the script.>&2
   echo ::----------------------------------------------------------------------------->&2
   echo ::>&2
-  echo ::-- The absolute path, without double quotes, to the Argument methods.>&2
+  echo ::-- Required: The absolute path, without double quotes, to the Argument methods.>&2
   echo set BIND_ARGUMENT=^<ArgumentCheckAbsoluteFilePath^>>&2
   echo ::>&2
-  echo ::-- The absolute path, without double quotes, to a command that generates a>&2
+  echo ::-- Required: The absolute path, without double quotes, to a command that generates a>&2
   echo ::-- cohesive set of diskpart commands.  Generator takes no arguments and produces>&2
   echo ::-- commands as strings to SYSOUT.>&2
   echo set DISKPART_CMD_GENERATOR=^<CMDgeneratorAbsoluteFilePath^>>&2
   echo ::>&2
-  echo ::-- The absolute path, without double quotes, to a command that verifies diskpart's>&2
+  echo ::-- Required: The absolute path, without double quotes, to a command that verifies diskpart's>&2
   echo ::-- expected outcome.  Checker accepts no arguments - caller must use no overlapping>&2
   echo ::-- environment variables that it sets before calling %~f0 to implement the Checker.>&2
   echo ::-- A return value by the checker other than 0 signifies an error.>&2
   echo set DISKPART_CONSTRAINT_CHECK=^<ConstraintCheckAbsoluteFilePath^>>&2
   echo ::>&2
-  echo ::-- The absolute path, absent double quotes, to the directory that contains the logging methods.>&2
+  echo ::-- Optional: The absolute path, absent double quotes, to the directory that contains the logging methods.>&2
   echo set LOGGER_BIND=^<LogMethodsAbsoluteFilePath^>>&2
   echo ::>&2
-  echo ::-- The absolute path, enclosed in double quotes, to the configuration file needed by the>&2
+  echo ::-- Optional: The absolute path, enclosed in double quotes, to the configuration file needed by the>&2
   echo ::-- logger.>&2
   echo set LOGGER_CONFIG_FILE="<LogConfigurationAbsoluteFilePath>">&2
   echo ::>&2
-  echo ::-- The absolute path, absent double quotes, to the directory that contains the GUID generation methods.>&2
+  echo ::-- Optional: The absolute path, absent double quotes, to the directory that contains the GUID generation methods.>&2
   echo set GUID_BIND=^<GUIDmethodsAbsoluteFilePath^>>&2
   echo ::>&2
   echo exit /b 0 >&2

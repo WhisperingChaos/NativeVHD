@@ -1,7 +1,7 @@
 001 - Missing required configuration file } neq 0 } "%VDISK_METHOD_PATH%\Delete.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify configuration file"
 002 - Log file generation } neq 0 } "%VDISK_METHOD_PATH%\Delete\Test\T002\run.cmd"
 003 - GUID Log file generation } neq 0 } "%VDISK_METHOD_PATH%\Delete\Test\T003\run.cmd"
-004 - Missing required DELETE_VHD_FILE and DISKPART_EXECUTOR_CONFIG_FILE } neq 0 } "%VDISK_METHOD_PATH%\Delete.cmd" "%VDISK_METHOD_PATH%\Delete\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*DELETE_VHD_FILE.*DISKPART_EXECUTOR_CONFIG_FILE"
+004 - Missing required DELETE_VHD_FILE and DISKPART_EXECUTOR_CONFIG_FILE } neq 0 } "%VDISK_METHOD_PATH%\Delete.cmd" "%VDISK_METHOD_PATH%\Delete\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*DELETE_VHD_FILE"
 005 - Successfully delete a VHD } neq 0 } "%VDISK_METHOD_PATH%\Delete\Test\T005\run.cmd"
 006 - Prevent successful deletion of VHD by protecting it as read only } neq 0 } "%VDISK_METHOD_PATH%\Delete\Test\T006\run.cmd"
 007 - Prevent successful deletion of VHD by protecting it as hidden } neq 0 } "%VDISK_METHOD_PATH%\Delete\Test\T007\run.cmd"

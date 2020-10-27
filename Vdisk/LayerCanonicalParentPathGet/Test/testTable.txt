@@ -1,7 +1,7 @@
 001 - Missing required configuration file } neq 0 } "%VDISK_METHOD_PATH%\LayerCanonicalParentPathGet.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify configuration file"
 002 - Log file generation } neq 0 } "%VDISK_METHOD_PATH%\LayerCanonicalParentPathGet\Test\T002\run.cmd"
 003 - GUID Log file generation } neq 0 } "%VDISK_METHOD_PATH%\LayerCanonicalParentPathGet\Test\T003\run.cmd"
-004 - Missing required LAYER_CANONICAL_LAYER_FILE and DISKPART_EXECUTOR_CONFIG_FILE } neq 0 } call "%VDISK_METHOD_PATH%\LayerCanonicalParentPathGet.cmd" "%VDISK_METHOD_PATH%\LayerCanonicalParentPathGet\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*LAYER_CANONICAL_LAYER_FILE.*LAYER_CANONICAL_OUTPUT_PARENT_FILE.*DISKPART_EXECUTOR_CONFIG_FILE"
+004 - Missing required LAYER_CANONICAL_LAYER_FILE } neq 0 } call "%VDISK_METHOD_PATH%\LayerCanonicalParentPathGet.cmd" "%VDISK_METHOD_PATH%\LayerCanonicalParentPathGet\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*LAYER_CANONICAL_LAYER_FILE.*LAYER_CANONICAL_OUTPUT_PARENT_FILE"
 005 - LAYER_CANONICAL_LAYER_FILE doesn't exist. - must run as administrator } neq 0 } "%VDISK_METHOD_PATH%\LayerCanonicalParentPathGet\Test\T005\run.cmd"
 006 - LAYER_CANONICAL_LAYER_FILE exists but isn't a VHD - must run as an administrator } neq 0 } "%VDISK_METHOD_PATH%\LayerCanonicalParentPathGet\Test\T006\run.cmd"
 007 - LAYER_CANONICAL_LAYER_FILE exists but it's its own (base) VHD - must run as an administrator } neq 0 } "%VDISK_METHOD_PATH%\LayerCanonicalParentPathGet\Test\T007\run.cmd"
