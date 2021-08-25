@@ -11,13 +11,13 @@ goto Main
   echo ::--
   echo ::--  Purpose:
   echo ::--    Fetch command names from a directory shared with other processes.
-  echo ::--    Using this name, locate its implementation that's located in a 
-  echo ::--    directory private: accessible, to only this process.  If the  
+  echo ::--    Using this name, execute its implementation that's located in a 
+  echo ::--    directory private - accessible to only this process.  If the  
   echo ::--    command's implementation exists in this private directory, then
   echo ::--    execute it.  Once executed, delete the command name from the shared
   echo ::--    directory.
   echo ::--
-  echo ::--    This script was ment to be periodically executed by Task Scheduler.
+  echo ::--    This script is designed to be periodically executed by Task Scheduler.
   echo ::--    It runs each task to completion before starting the next one.  The
   echo ::--    tasks are executed in sorted order by name, therefore, one can execute
   echo ::--    a chain of ordered tasks without writing additional code.
@@ -80,7 +80,7 @@ goto Main
   echo ::-- Optional: The absolute path, absent double quotes, to the directory that contains the GUID generation methods.
   echo set GUID_BIND=^<GUIDmethodsAbsoluteFilePath^>
   echo ::
-  echo exit /b 0 >&2
+  echo exit /b 0
 )>&2
 exit /b 0
 
@@ -130,7 +130,6 @@ exit /b 0
     call :Abort "Please specify a TASK_FETCH_PRIVATE_IMPLEMENTATION_DIR that exists.  Cannot find '" "%TASK_FETCH_PRIVATE_IMPLEMENTATION_DIR%" "'"
     exit /b 1
   )
-  
   ::-- Module is configured, now log the start of this effort.
   call :Inform "Started: Task: '" %TASK_FETCH_SHARED_SCAN_DIR% "' FetchExecute"
 
@@ -155,29 +154,50 @@ exit /b 0
 
 :TaskExecuteDelete:
 setlocal
-  set TASK_REQUEST_DIR=%~1
-  set TASK_CODE_DIR=%~2
-  set TASK_NAME=%~3
+::-- Environment variable names can't be used in this context.  The purpose of this routine is to establish
+::-- the dynamic context of the requested private process. by using numbered arguments, there can be no
+::-- overlap with a variable name.  Furthermore, the value of numbered arguments are automatically
+::-- restore when returning from a call - without using setlocal/endlocal.  This prevents malicious
+::-- code from affecting these values even after a call.
+::
+::-- Documents the association between argument number and a descriptive name.  
+::set TASK_REQUEST_DIR=%~1
+::set TASK_CODE_DIR=%~2
+::set TASK_NAME=%~3
   
-  if not exist "%TASK_CODE_DIR%\%TASK_NAME%" (
-    call :Abort "Requested Task: '" "%TASK_NAME%" "' does not exist in TASK_CODE_DIR: '" "%TASK_CODE_DIR" "'."
+  if not exist "%~2\%~3%" (
+    call :Abort "Requested Task: '" "%~3%" "' does not exist in TASK_CODE_DIR: '" "%TASK_CODE_DIR" "'."
     exit /b 1
   )
-  call "%TASK_CODE_DIR%\%TASK_NAME%"
+  call :TaskDynamicEnvironmentSet "%~1\%~3%"
+  
+  call "%~2\%~3"
   if %errorlevel% neq 0 (
-    call :Abort "Task: '" "%TASK_NAME%" "' in TASK_REQUEST_DIR: '" "%TASK_REQUEST_DIR%" "' failed with errorlevel: %errorlevel%."
+    call :Abort "Task: '" "%~3" "' in TASK_REQUEST_DIR: '" "%~1" "' failed with errorlevel: %errorlevel%."
     exit /b %errorlevel%
   )	
   :: successful task execution - delete request
-  del "%TASK_REQUEST_DIR%\%TASK_NAME%" >nul
+  del "%~1\%~3" >nul
   if %errorlevel% neq 0 (
-    call :Abort "Requested Task: '" "%TASK_NAME%" "' does not exist in TASK_REQUEST_DIR: '" "%TASK_REQUEST_DIR%" "'."
+    call :Abort "Requested Task: '" "%~3" "' does not exist in TASK_REQUEST_DIR: '" "%~1" "'."
     exit /b 1
   )
 endlocal
 exit /b 0
 
 
+:TaskDynamicEnvironmentSet:
+::-- no setlocal - need dynamic environment variables visible to the task that will use them. 
+::set TASK_REQUEST_PATHFILE=%~1
+
+  :: A reasonable environment variable name is expected.  Not all valid name characters are allowed, like '?{}[]
+  :: using ^ delimiter permits setting "for" statement options, like "delims" to an empty set
+  for /F tokens^=*^ delims^=^ eol^=  %%v in ( 'type "%~1" ^| findstr /R /C:"^[a-z][a-z0-9\._\-\~]*=.*"' ) do (
+	set %%v
+  )
+exit /b 0
+ 
+  
 ::-- Determine if the transaction identifier has been defined before the configuration of this module.
 ::-- If it has, this module is a more primative element of an aggregate transaction.  Therefore, its
 ::-- logged error messages will reflect the aggregate transaction id.  This allows the "tracing" of
