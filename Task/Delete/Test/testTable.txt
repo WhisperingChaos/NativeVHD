@@ -1,0 +1,8 @@
+001 - Missing required configuration file } neq 0 } "%METHOD_PATH%\Create.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify configuration file"
+002 - Log file generation } neq 0 } "%METHOD_PATH%\Create\Test\T002\run.cmd"
+003 - GUID Log file generation } neq 0 } "%METHOD_PATH%\Create\Test\T003\run.cmd"
+004 - Missing required TASK_CREATE_SHARED_REQUEST_DIR, TASK_CREATE_NAME } neq 0 } "%METHOD_PATH%\Create.cmd" "%METHOD_PATH%\Create\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*TASK_CREATE_SHARED_REQUEST_DIR.*TASK_CREATE_NAME"
+005 - Missing TASK_CREATE_SHARED_REQUEST_DIR } neq 0 } "%METHOD_PATH%\Create.cmd" "%METHOD_PATH%\Create\Test\T005\config.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify a shared request directory: TASK_CREATE_SHARED_REQUEST_DIR:.*that exists and is accessible."
+006 - Create a task that's just a name- no body } neq 0 } "%METHOD_PATH%\Create\Test\T006\run.cmd"
+007 - Create a task whose body is streamed using "STDIN". } neq 0 } "%METHOD_PATH%\Create\Test\T007\run.cmd"
+008 - Create a task whose body is copied from a file path.} neq 0 } "%METHOD_PATH%\Create\Test\T008\run.cmd"
