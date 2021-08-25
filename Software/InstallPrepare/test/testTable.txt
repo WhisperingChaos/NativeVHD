@@ -1,0 +1,3 @@
+001 - Missing required configuration file } neq 0 } "%METHOD_PATH%\InstallPrepare.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify configuration file"
+002 - Log file generation } neq 0 } "%METHOD_PATH%\InstallPrepare\Test\T002\run.cmd"
+003 - GUID Log file generation } neq 0 } "%METHOD_PATH%\InstallPrepare\Test\T003\run.cmd"

@@ -1,0 +1,2 @@
+/k "" /c "BASEOSWIN8" /u "zServicePC" /d "04/30/2021:12:39:05.42" /t "Abort" /p "E:\scripts\NativeVHD\Software\InstallPrepare.cmd" /m "Following configuration variables must be defined:' BOOT_MANAGER_BIND STARTUP_BIND COMPUTER_NAME INSTALL_PREP_IMAGE_TO_REVERT INSTALL_PREP_TASK_REVERT_FILE_PATH '."	
+/k "" /c "BASEOSWIN8" /u "zServicePC" /d "04/30/2021:12:39:05.43" /t "Abort" /p "E:\scripts\NativeVHD\Software\InstallPrepare.cmd" /m "Please correct errors in configuration file 'E:\scripts\NativeVHD\Software\InstallPrepare\test\T003\\config.cmd'."	
