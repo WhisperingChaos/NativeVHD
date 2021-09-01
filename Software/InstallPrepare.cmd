@@ -68,16 +68,28 @@ goto Main
   echo ::-- task create method
   echo set TASK_CREATE_CONFIG_FILE="<TaskCreateConfigurationAbsoluteFilePath>"
   echo ::
-  echo ::
   echo ::-- Required: The absolute path, enclosed in double quotes, to the configuration file needed by the
   echo ::-- task create method
   echo set TASK_DELETE_CONFIG_FILE="<TaskCreateConfigurationAbsoluteFilePath>"
   echo ::
+  echo ::-- Required: The absolute path, absent double quotes, to the directory that contains the BootManager methods.
+  echo set BOOT_MANAGER_BIND=^<TaskmethodsAbsoluteFilePath^>
+  echo :: 
+  echo ::-- Required: The absolute path, enclosed in double quotes, to the configuration file needed by the DefaultSet
+  echo ::-- method.
+  echo set BOOT_MANAGER_DEFAULT_SET_CONFIG_FILE=
+  echo ::
   echo ::-- Required: The name of the computer being reverted.  Assumes windows COMPUTERNAME if not specified
   echo set COMPUTER_NAME=^%COMPUTERNAME^%
   echo ::
+  echo ::-- Required: The absolute path, absent double quotes, to the directory that contains the file methods.
+  echo set FILE_BIND=^<FileMethodsAbsoluteFilePath^>
   echo ::
-
+  echo ::-- Required: The absolute path, enclosed in double quotes, to the configuration file needed by the
+  echo ::-- TempCreate method
+  echo set FILE_TEMP_CREATE_CONFIG_FILE="<FileTempCreateConfigurationAbsoluteFilePath>"
+  echo ::
+  
   echo exit /b 0
 )>&2
 exit /b
@@ -100,15 +112,10 @@ setlocal
     call :Help
     exit /b 1
   )
-  
   call "%~1"
-  if errorlevel 1 call :Abort "Problem detected while processing paramters from configuration file:'%~1'." & exit /b 1
-
-  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY GUID_BIND LOGGER_BIND LOGGER_CONFIG_FILE TASK_BIND TASK_CONFIG_FILE COMPUTER_NAME 
   if errorlevel 1 (
-     call :Abort "Following configuration variables must be defined:'%ARGUMENT_CHECK_EMPTY%'."
-     call :Abort "Please correct errors in configuration file '%~1'."
-     exit /b 1
+    call :Abort "Problem detected while processing paramters from configuration file:'%~1'."
+    exit /b 1
   )
   ::-- Determine if the transaction identifier has been defined before the configuration of this module.
   ::-- If it has, this module is a more primative element of an aggregate transaction.  Therefore, its
@@ -117,10 +124,18 @@ setlocal
   ::-- execution with the shared transaction identifier.  Otherwise, this module is being executed
   ::-- as a stand alone transaction, therefore, generate its own unique transaction id.
   if "%NHN.TRANSACTION_ID%"=="" (
-     call "%GUID_BIND%\gen" NHN.TRANSACTION_ID
-     if errorlevel 1 call :Abort "Generation of unique Transaction Id failed." & exit /b 1
+    call "%GUID_BIND%\gen" NHN.TRANSACTION_ID
+    if errorlevel 1 ( 
+	  call :Abort "Generation of unique Transaction Id failed."
+      exit /b 1
+	)
   )
-
+  call "%BIND_ARGUMENT%\Check" ARGUMENT_CHECK_EMPTY GUID_BIND LOGGER_BIND LOGGER_CONFIG_FILE TASK_BIND TASK_CONFIG_FILE COMPUTER_NAME 
+  if errorlevel 1 (
+    call :Abort "Following configuration variables must be defined:'%ARGUMENT_CHECK_EMPTY%'."
+    call :Abort "Please correct errors in configuration file '%~1'."
+    exit /b 1
+  )
   ::-- Module is configured, now log the start of this effort.
   call :Inform "Starting: Install Software Prep:'%INSTALL_PREP_IMAGE_TO_REVERT%'"
 
@@ -136,22 +151,21 @@ setlocal
   call :TaskRevertCreate %TASK_CREATE_CONFIG_FILE%
   if errorlevel 1 exit /b 1
 
-  call :BCDboot  %INSTALL_PREP_UILITY_BCD_ID%
+  call :BCDbootOther  %BOOT_MANAGER_DEFAULT_SET_CONFIG_FILE%
   if errorlevel 1 (
     call :TaskRevertCancel %TASK_DELETE_CONFIG_FILE%
     exit /b 1
   )
   call :MachineReboot
-  if errorlevel 1 exit /b 1
+  if errorlevel 1 (
     call :TaskRevertCancel %TASK_DELETE_CONFIG_FILE%
-    call :BCDboot "{current}"
+    call :BCDbootRevert
     exit /b 1
   ) 
   call :Inform "Ended: Starting: Install Software Prep:'%INSTALL_PREP_IMAGE_TO_REVERT%'" Successful"
 
 endlocal
 exit /b 0
-
 
 ::-----------------------------------------------------------------------------
 ::--
@@ -380,7 +394,6 @@ exit /b 0
 setlocal
 
   call "%TASK_BIND%\Create" %TASK_CREATE_CONFIG_FILE%
-  
   if errorlevel 1 (
     call :Abort "Failed to create task request needed to continue install request.  See: '" %TASK_CREATE_CONFIG_FILE% "'."
 	exit /b 1
@@ -408,7 +421,6 @@ exit /b 0
 setlocal
 
   call "%TASK_BIND%\Delete" %TASK_DELETE_CONFIG_FILE%
-  
   if errorlevel 1 (
     call :Abort "Failed to delete revert task request during cancel on install.  See: '" %TASK_DELETE_CONFIG_FILE% "'."
 	exit /b 1
@@ -420,7 +432,7 @@ exit /b 0
 ::-----------------------------------------------------------------------------
 ::--
 ::--  Purpose:
-::--    Set default Boot to specified computer.
+::--    Set default boot entry to a different OS image.
 ::--
 ::--  Input:
 ::--    1.  %1 - Desired Boot Configuration Data (BCD) Identifier.
@@ -431,16 +443,57 @@ exit /b 0
 ::--		1: Failed to generate the request.
 ::--
 ::-----------------------------------------------------------------------------
-:BCDboot:
+:BCDbootOther:
 setlocal
-set COMPUTER_BCD_ID=%~1
+set BOOT_MANAGER_DEFAULT_SET_CONFIG_FILE=%1
 
-  start /elevate /b /wait bcdedit /default %COMPUTER_BCD_ID%
-  
+  call "BOOT_MANAGER_BIND%\DefaultSet" %BOOT_MANAGER_DEFAULT_SET_CONFIG_FILE%
   if errorlevel 1 (
-	call :Abort "Failed to establish specified BCD Identifier:'%COMPUTER_BCD_ID%' as default boot entry."
+	call :Abort "Failed to set different OS as default boot entry."
 	exit /b 1
   )
+endlocal
+exit /b 0
+
+
+---------------------------------
+::--
+::--  Purpose:
+::--    Revert boot entry back to this OS image.
+::--
+::--  Input:
+::--    None.
+::--
+::--  Output:
+::--    1.  errorlevel:
+::--		0: Successful
+::--		1: Failed
+::--
+::-----------------------------------------------------------------------------
+:BCDbootRevert:
+setlocal
+
+  set TEMP_BOOT_DEFAULT_SET_CONFIG=
+  call "%FILE_BIND\TempCreate"  %FILE_TEMP_CREATE_CONFIG_FILE%
+  if errorlevel 1 (
+	call :Abort "Failed to set different OS as default boot entry."
+	exit /b 1
+  )
+  (
+  echo set BIND_ARGUMENT=%BIND_ARGUMENT%
+  echo set BOOT_ENTRY_DESCRIPTION_OR_GUID={current}
+  echo set LOGGER_BIND=%LOGGER_BIND%
+  echo set LOGGER_CONFIG_FILE=%LOGGER_CONFIG_FILE%
+  echo set GUID_BIND=%GUID_BIND%
+  )>"%TEMP_BOOT_DEFAULT_SET_CONFIG%"
+
+  call "BOOT_MANAGER_BIND%\DefaultSet" "%TEMP_BOOT_DEFAULT_SET_CONFIG%"
+  if errorlevel 1 (
+	call :Abort "Failed to set different OS as default boot entry.  See:TEMP_BOOT_DEFAULT_SET_CONFIG:'%TEMP_BOOT_DEFAULT_SET_CONFIG%'."
+	exit /b 1
+  )
+  del "%TEMP_BOOT_DEFAULT_SET_CONFIG%" >nul
+
 endlocal
 exit /b 0
 

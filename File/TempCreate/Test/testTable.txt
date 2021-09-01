@@ -1,0 +1,7 @@
+001 - Missing required configuration file } neq 0 } "%METHOD_PATH%\TempCreate.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify configuration file"
+002 - Log file generation } neq 0 } "%METHOD_PATH%\TempCreate\Test\T002\run.cmd"
+003 - GUID Log file generation } neq 0 } "%METHOD_PATH%\TempCreate\Test\T003\run.cmd"
+004 - Missing required FILE_TEMP_CREATE_ABSOLUTE_FILEPATH_OUT FILE_TEMP_CREATE_PATH } neq 0 } call "%METHOD_PATH%\TempCreate.cmd" "%METHOD_PATH%\TempCreate\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*FILE_TEMP_CREATE_ABSOLUTE_FILEPATH_OUT.*FILE_TEMP_CREATE_PATH"
+005 - FILE_TEMP_CREATE_PATH must exist } neq 0 } call "%METHOD_PATH%\TempCreate.cmd" "%METHOD_PATH%\TempCreate\Test\T005\config.cmd" 2>&1 | findstr /R /C:"Abort.*Directory to contain temp file.*ShouldNotExist"
+006 - Successfully generate temp file name } neq 0 } call "%METHOD_PATH%\TempCreate\Test\T003\run.cmd"
+007 - Successfully generate temp file name with prefix and suffix } neq 0 } call "%METHOD_PATH%\TempCreate\Test\T007\run.cmd"

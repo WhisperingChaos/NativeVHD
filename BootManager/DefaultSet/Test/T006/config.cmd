@@ -2,5 +2,5 @@
 set BIND_ARGUMENT=%~dp0\..\..\..\..\Argument
 ::
 echo ::-- Required: GUID of boot entry, encapsulated in brackets: {}, to become default entry.
-set BOOT_ENTRY_GUID={00000000-eeee-ffff-ffff-000000000000}
+set BOOT_ENTRY_DESCRIPTION_OR_GUID={00000000-eeee-ffff-ffff-000000000000}
 ::

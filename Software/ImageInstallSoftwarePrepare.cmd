@@ -2,87 +2,89 @@
 goto Main
 
 :Help:
-  echo ::----------------------------------------------------------------------------->&2
-  echo ::-->&2
-  echo ::--  Module:	%~f0>&2
-  echo ::--  Version:	1.0>&2
-  echo ::--  Author:	Richard Moyse>&2	
-  echo ::-->&2
-  echo ::--  Purpose:>&2
-  echo ::--	Prepare to "revert" the current OS image to its most recently>&2
-  echo ::--	"merged" state.>&2
-  echo ::-->&2
-  echo ::--  Assumes:>&2
-  echo ::--	1.  Relies on Windows BCDedit feature of Windows 7 and above.>&2
-  echo ::--	2.  Executing script with Administrator privileges.>&2
-  echo ::--	3.  Chages are applied to the default boot manager instance.>&2
-  echo ::--	4.  Its companion "Image<VolumeLabelNameToClean>Revert.cmd" exists>&2
-  echo ::--	    in the same directory as itself.>&2
-  echo ::--	5.  The OS is managed as a set of Virtual Hard Drives (VHDs) where>&
-  echo ::--	    a bootable child VHD protects the state of its parent VHD.
-  echo ::-->&2
-  echo ::--  Input:>&2
-  echo ::--	1.  %1: Either:>&2
-  echo ::--		 	The full path name to a configuration file conatining>&2
-  echo ::--		 	argument values.>&2
-  echo ::--			"/?" displays the "help".>&2
-  echo ::-->&2
-  echo ::--  Output:>&2
-  echo ::--	1.  A script that will discard changes made to the  .>&2
-  echo ::--	2.  A new boot manager instance that replaced the primary>&2
-  echo ::--	    boot manager instance, with one preconfigured with an entry>&2
-  echo ::--	    to boot into the PhysicalWin7 volume/image,>&2
-  echo ::--	    as the new default boot OS.>&2
-  echo ::--	3.  errorlevel:>&2
-  echo ::--		0: Either:>&2
-  echo ::--			Successful execution of "/?">&2
-  echo ::--			Preparations to revert the desired volume was successful.>&2
-  echo ::--		1: Failure.>&2
-  echo ::-->&2
-  echo ::----------------------------------------------------------------------------->&2
-  echo ::>&2
-  echo ::>&2
-  echo ::----------------------------------------------------------------------------->&2
-  echo ::-- Configuration file settings needed by the %~f0 script.>&2
-  echo ::-- This script is called from the same command processor as the %~f0 script>&2
-  echo ::-- Therefore, you can use other environment variables within this command process,>&2
-  echo ::-- like the user specific %%TEMP%% variable, and it will refer to the same one visible to the >&2
-  echo ::-- script.>&2
-  echo ::-->&2
-  echo ::-- Do not code a startlocal or endlocal within this script, at least at this top most level,>&2
-  echo ::-- as it will erase the values set by the script.>&2
-  echo ::----------------------------------------------------------------------------->&2
-  echo ::>&2
-  echo ::-- The absolute path, without double quotes, to the Argument methods.>&2
-  echo set BIND_ARGUMENT=^<ArgumentCheckAbsoluteFilePath^>>&2
-  echo ::>&2
-  echo ::-- The absolute path, without double quotes, to the Boot Manager methods.>&2
-  echo set BOOT_MANAGER_BIND=^<BootManagerMethodsAbsoluteFilePath^>>&2
-  echo ::>&2
-  echo ::-- The absolute path, absent double quotes, to the directory that contains the GUID generation methods.>&2
-  echo set GUID_BIND=^<GUIDmethodsAbsoluteFilePath^>>&2
-  echo ::>&2
-  echo ::-- The absolute path, absent double quotes, to the directory that contains the GUID generation methods.>&2
-  echo set STARTUP_BIND=^<MachineStartupMethodsAbsoluteFilePath^>>&2
-  echo ::>&2
-  echo ::-- The absolute path, absent double quotes, to the directory that contains the logging methods.>&2
-  echo set LOGGER_BIND=^<LogMethodsAbsoluteFilePath^>>&2
-  echo ::>&2
-  echo ::-- The absolute path, enclosed in double quotes, to the configuration file needed by the>&2
-  echo ::-- logger>&2
-  echo set LOGGER_CONFIG_FILE="<LogConfigurationAbsoluteFilePath>">&2
-  echo ::>&2
-  echo ::-- The windows Volume (drive label name) assigned to the VHD.  Should reflect the role name of the>&2
-  echo ::-- person using this image.  The label name must not contain spaces.>&2
-  echo set VOLUME_LABEL_TO_REVERT=^<VolumeLabelNameToClean^>>&2
-  echo ::>&2
+(
+  echo ::-----------------------------------------------------------------------------
+  echo ::--
+  echo ::--  Module:	%~f0
+  echo ::--  Version:	1.0
+  echo ::--  Author:	Richard Moyse	
+  echo ::--
+  echo ::--  Purpose:
+  echo ::--	   Prepare to "revert" the current OS image to its most recently
+  echo ::--	   "merged" state.
+  echo ::--
+  echo ::--  Assumes:
+  echo ::--    1.  Relies on Windows BCDedit feature of Windows 7 and above.
+  echo ::--    2.  Executing script with Administrator privileges.
+  echo ::--    3.  Chages are applied to the default boot manager instance.
+  echo ::--    4.  Its companion "Image<VolumeLabelNameToClean>Revert.cmd" exists
+  echo ::--        in the same directory as itself.
+  echo ::--    5.  The OS is managed as a set of Virtual Hard Drives ^(VHDs^) where>&
+  echo ::--        a bootable child VHD protects the state of its parent VHD.
+  echo ::--
+  echo ::--  Input:
+  echo ::--	1.  %1: Either:
+  echo ::--		 	The full path name to a configuration file conatining
+  echo ::--		 	argument values.
+  echo ::--			"/?" displays the "help".
+  echo ::--
+  echo ::--  Output:
+  echo ::--	1.  A script that will discard changes made to the  .
+  echo ::--	2.  A new boot manager instance that replaced the primary
+  echo ::--	    boot manager instance, with one preconfigured with an entry
+  echo ::--	    to boot into the PhysicalWin7 volume/image,
+  echo ::--	    as the new default boot OS.
+  echo ::--	3.  errorlevel:
+  echo ::--		0: Either:
+  echo ::--			Successful execution of "/?"
+  echo ::--			Preparations to revert the desired volume was successful.
+  echo ::--		1: Failure.
+  echo ::--
+  echo ::-----------------------------------------------------------------------------
+  echo ::
+  echo ::
+  echo ::-----------------------------------------------------------------------------
+  echo ::-- Configuration file settings needed by the %~f0 script.
+  echo ::-- This script is called from the same command processor as the %~f0 script
+  echo ::-- Therefore, you can use other environment variables within this command process,
+  echo ::-- like the user specific %%TEMP%% variable, and it will refer to the same one visible to the 
+  echo ::-- script.
+  echo ::--
+  echo ::-- Do not code a startlocal or endlocal within this script, at least at this top most level,
+  echo ::-- as it will erase the values set by the script.
+  echo ::-----------------------------------------------------------------------------
+  echo ::
+  echo ::-- The absolute path, without double quotes, to the Argument methods.
+  echo set BIND_ARGUMENT=^<ArgumentCheckAbsoluteFilePath^>
+  echo ::
+  echo ::-- The absolute path, without double quotes, to the Boot Manager methods.
+  echo set BOOT_MANAGER_BIND=^<BootManagerMethodsAbsoluteFilePath^>
+  echo ::
+  echo ::-- The absolute path, absent double quotes, to the directory that contains the GUID generation methods.
+  echo set GUID_BIND=^<GUIDmethodsAbsoluteFilePath^>
+  echo ::
+  echo ::-- The absolute path, absent double quotes, to the directory that contains the GUID generation methods.
+  echo set STARTUP_BIND=^<MachineStartupMethodsAbsoluteFilePath^>
+  echo ::
+  echo ::-- The absolute path, absent double quotes, to the directory that contains the logging methods.
+  echo set LOGGER_BIND=^<LogMethodsAbsoluteFilePath^>
+  echo ::
+  echo ::-- The absolute path, enclosed in double quotes, to the configuration file needed by the
+  echo ::-- logger
+  echo set LOGGER_CONFIG_FILE="<LogConfigurationAbsoluteFilePath>"
+  echo ::
+  echo ::-- The windows Volume ^(drive label name^) assigned to the VHD.  Should reflect the role name of the
+  echo ::-- person using this image.  The label name must not contain spaces.
+  echo set VOLUME_LABEL_TO_REVERT=^<VolumeLabelNameToClean^>
+  echo ::
   echo ::-- Windows account names that will be notified when they log in to potentially continue
   echo ::-- the software install process.  Account names containing spaces must be encapsulated
   echo ::-- in double quotes. Use a space to seperate account names.
-  echo set USER_ACCOUNT_NOTIFY_LIST=^<WindowsAccountName1^> ^<WindowsAccountName2>^....^<WindowsAccountName6>>&2
+  echo set USER_ACCOUNT_NOTIFY_LIST=^<WindowsAccountName1^> ^<WindowsAccountName2>^....^<WindowsAccountName6^>
   echo ::>&2
 
   echo exit /b 0 >&2
+)
 exit /b
 
 
@@ -117,9 +119,15 @@ exit /b
   ::-- Module is configured, now log the start of this effort.
   call :Inform "Starting: Install Software %STEP_CURRENT%:'%VOLUME_LABEL_TO_REVERT%'"
   ::--  Potentially continue an ongoing 
-  call :%STEP_CURRENT%
+  call :InstallStepOverview
   if errorlevel 1 exit /b 1
-  ::-- successful so far!
+
+  call :InstallObtainPackages
+  if errorlevel 1 exit /b 1
+
+  call :InstallRevert
+  if errorlevel 1 exit /b 1
+ 
   call :Inform "Ended: Starting: Install Software %STEP_CURRENT%:'%VOLUME_LABEL_TO_REVERT%'" Successful"
 
 exit /b 0
@@ -210,17 +218,18 @@ exit /b 0
   echo.
   echo.
   echo	  The Software installation Process consists of a series of 
-  echo	  steps (subprocesses) to ensure the proper installation
-  echo	  of the desired application(s) that's also devoid of
-  echo	  malware.  The following outline describes the necessary
-  echo	  subprocess:
+  echo	  steps to properly install and integrate the software into
+  echo	  the computer's image.  The following outline summarizes
+  echo    these steps:
   echo. 
-  echo	  1.  When possible, obtain the installation package(s) for 
-  echo	      the desired application(s) and perserve these
-  echo	      package(s) in an appropriate directory. 
+  echo	  1.  Save the installation package(s) for the desired 
+  echo	      application(s) to following directory.
   echo.
-  echo    2.  Revert this volume image back to its original state
-  echo	      and return to this desktop.
+  echo    2.  Revert the computer's environment to its last "good"
+  echo        state.  Reversion eliminates any changes applied to the
+  echo        computer, except for files that that exist in the following
+  echo        directories:  "Documents", "Desktop", "Downloads" "Music",
+  echo        "Pictures", "Videos".
   echo.
   echo	  3.  Execute the installation package(s) for the desired
   echo	      application(s).
@@ -230,11 +239,8 @@ exit /b 0
   echo	  5.  Cleanup any artifacts produced by each application's
   echo	      install package.
   echo.
-  echo	  6.  Update the base image (parent VHD) with the 
-  echo	      changes applied by the installation packages to
-  echo	      the derived image (child VHD)
-  echo.
-  echo	  7.  Backup this new base image.
+  echo	  6.  Integrate the newly installed application(s) into the last
+  echo        "good" image creating a new "good" image.
 
   call :PromptContinue "Install Software for '%~1' volume"
 
@@ -244,8 +250,8 @@ exit /b
 ::-----------------------------------------------------------------------------
 ::--
 ::--  Purpose:
-::--	Direct user to acquire software packages, classify, and then save
-::--	them, as these packages will be installed after the current image
+::--	Direct user to acquire software packages and then save them,
+::--	as these packages will be installed after the current image
 ::--	has been reverted.  The installation packages are acquired before
 ::--	reverting the image to minimize any activity subsequent to reverting
 ::--	the immage that might introduce malware into the new image being
@@ -282,39 +288,19 @@ exit /b
   echo.
   echo. 
   echo	  Please obtain the installation package(s) for the desired
-  echo    application(s) and save it(them) in one of the following
-  echo	  directories subordinate to the "PC Config????"
-  echo	  link found on this desktop (desktop of zServicePC): 
+  echo    application(s).
   echo.
-  echo    >  "End User Applications": Software directly required by
-  echo	     the "role" assigned to this image.  For example, the
-  echo	     "Student" image supports the "Student" role and a
-  echo	     Student primarily uses Office products, like Word,
-  echo	     to complete assignments requested by their Teachers. 
+  echo    Save each installation package to its own subdirectory whose
+  echo    parent is: "E:\Local\InstallPackage".  For example, for the
+  echo    an install package named "skypeInstall.exe" create a subdirectory
+  echo    called: "E:\Local\InstallPackage\skype" and save "skypeInstall.exe"
+  echo    to it. 
   echo.
-  echo	     The contents of this directory contains a few classifying
-  echo	     subdirectories. For example, the "Browser" subdirectory contains
-  echo	     install packages for alternate browsers, like Firefox,
-  echo	     and any plugins that offer stand alone installs.  Please
-  echo	     save the install package to an appropriate classifying
-  echo	     directory, and if one doesn't currently exist create it.
-  echo.
-  echo	  >   "System Utilities": Software designed to extend the OS
-  echo	      environment to either assist in its management
-  echo	      or provide the necessary extensions to support an
-  echo	      end user application.  For example, the most recent
-  echo	      BIOS firmware and device drivers installs can be found
-  echo	      in the appropriately named classifying
-  echo	      subdirectory: "BIOS - Drivers"
-  echo.
-  echo	  All of these directories survive an image revert operation
-  echo	  as they are located on the physical drive.
-  echo.  
   echo	  Although not all install packages can be captured,
   echo    for example, some browser plugins install themselves,
-  echo	  most install packages can be saved as a file.  For example,
-  echo	  an ISO image file can be constructed from a CD/DVD using the
-  echo    installed DVD/CD copying software.
+  echo	  most install packages can be saved as a file.  Even those recorded
+  echo    a CD/DVD. In this situation, an ISO image file can be generated from
+  echo    a CD/DVD using the installed DVD/CD copying software.
   echo.  
   echo	  Finally, if the installation packaged must be activated via 
   echo	  a product key, create a simple "ProductKey.txt" file in the same
@@ -324,6 +310,11 @@ exit /b
   call :PromptContinue "Install Software for '%~1' volume"
 
 exit /b
+
+
+:InstallRevert:
+
+
 
 
 ::-----------------------------------------------------------------------------
