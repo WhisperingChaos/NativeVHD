@@ -1,0 +1,7 @@
+001 - Missing required configuration file } neq 0 } "%METHOD_PATH%\GenNext.cmd" 2>&1 | findstr /R /C:"Abort.*Please specify configuration file"
+002 - Log file generation } neq 0 } "%METHOD_PATH%\GenNext\Test\T002\run.cmd"
+003 - GUID Log file generation } neq 0 } "%METHOD_PATH%\GenNext\Test\T003\run.cmd"
+004 - Missing required GENERATIONAL_FILE_NAME } neq 0 } call "%METHOD_PATH%\GenNext.cmd" "%METHOD_PATH%\GenNext\Test\T004\config.cmd" 2>&1 | findstr /R /C:"Abort.*Following configuration variables must be defined.*GENERATIONAL_FILE_NAME"
+005 - GENERATIONAL_FILE_NAME must exist } neq 0 } call "%METHOD_PATH%\GenNext.cmd" "%METHOD_PATH%\GenNext\Test\T005\config.cmd" 2>&1 | findstr /R /C:"GENERATIONAL_FILE_NAME must exist:.*does not exist or inaccessible due to permissions."
+006 - Generational File successfully created } neq 0 } call "%METHOD_PATH%\GenNext\Test\T006\run.cmd"
+007 - Successfully generate temp file name with prefix and suffix } neq 0 } call "%METHOD_PATH%\GenNext\Test\T007\run.cmd"
